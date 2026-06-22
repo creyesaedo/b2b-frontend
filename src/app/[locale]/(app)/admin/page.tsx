@@ -38,10 +38,10 @@ export default function AdminHomePage() {
             description={t('categoriesDesc')}
           />
           <AdminCard
+            href="/admin/subcategories"
             icon={LayoutGrid}
             title={t('subcategoriesTitle')}
             description={t('subcategoriesDesc')}
-            badge={t('comingSoon')}
           />
         </Section>
 

@@ -91,6 +91,42 @@
     "noAccess": "No tienes permisos para ver esta página.",
     "confirmDelete": "¿Eliminar esta categoría canónica? Las vinculadas quedarán sin asignar."
   },
+  "adminSub": {
+    "back": "Volver a administración",
+    "title": "Curación de subcategorías",
+    "subtitle": "Agrupa las subcategorías por país bajo subcategorías canónicas, dentro de cada categoría canónica.",
+    "canonicalLabel": "Categoría canónica:",
+    "selectCanonical": "Elegí una categoría canónica…",
+    "pickCanonicalFirst": "Elegí una categoría canónica para empezar a curar sus subcategorías.",
+    "subcatsTitle": "Subcategorías canónicas",
+    "newPlaceholder": "Nueva subcategoría canónica…",
+    "create": "Crear",
+    "delete": "Eliminar",
+    "linkedCount": "{count} vinculadas",
+    "candidatesTitle": "Subcategorías por país (con productos)",
+    "searchPlaceholder": "Filtrar por nombre…",
+    "allCountries": "Todos los países",
+    "assignTo": "Asignar a…",
+    "assign": "Asignar",
+    "unassign": "Desasignar",
+    "selected": "{count} seleccionadas",
+    "colCountry": "País",
+    "colName": "Subcategoría",
+    "colParent": "Categoría raíz",
+    "colProducts": "Productos",
+    "colCurrent": "Subcanónica actual",
+    "none": "—",
+    "viewProducts": "Ver productos",
+    "peekSubtitle": "{count} productos en esta subcategoría",
+    "pColName": "Producto",
+    "pColPrice": "Precio",
+    "pColSold": "Vendidos",
+    "pColRanking": "Ranking",
+    "pColSeller": "Vendedor",
+    "close": "Cerrar",
+    "noAccess": "No tienes permisos para ver esta página.",
+    "confirmDelete": "¿Eliminar esta subcategoría canónica? Las vinculadas quedarán sin asignar."
+  },
   "landing": {
     "hero": {
       "badge": "Inteligencia de mercado para e-commerce",
@@ -207,7 +243,9 @@
     "noHistory": "No hay historial para este producto.",
     "periodAll": "Todo el historial",
     "periodYear": "Último año",
-    "periodMonth": "Último mes"
+    "periodMonth": "Último mes",
+    "currency": "Moneda",
+    "local": "Local"
   },
   "categories": {
     "title": "Análisis por categoría",

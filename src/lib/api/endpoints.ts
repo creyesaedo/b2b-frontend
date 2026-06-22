@@ -6,6 +6,7 @@ import type {
   CategoryCandidate,
   CategoryFacet,
   GlobalCategory,
+  GlobalSubcategory,
   HistoryPoint,
   Paginated,
   Permission,
@@ -13,6 +14,7 @@ import type {
   ProductListParams,
   Role,
   Stats,
+  SubcategoryCandidate,
 } from '../types';
 
 const PROVIDER = 'ml';
@@ -41,6 +43,7 @@ function normalizeHistory(h: HistoryPoint): HistoryPoint {
     ...h,
     price: num(h.price) ?? 0,
     original_price: num(h.original_price),
+    usd_price: num(h.usd_price),
   };
 }
 
@@ -134,6 +137,45 @@ export const assignCategories = (id: number, categoryIds: number[]) =>
 
 export const unassignCategories = (categoryIds: number[]) =>
   apiFetch(`/v1/${PROVIDER}/global-categories/unassign`, {
+    method: 'POST',
+    body: JSON.stringify({ categoryIds }),
+  });
+
+// --- Canonical subcategory curation (admin: admin:manage) -------------------
+
+export const listGlobalSubcategories = (globalCategoryId?: number) =>
+  apiFetch<GlobalSubcategory[]>(
+    `/v1/${PROVIDER}/global-subcategories${qs({ global_category_id: globalCategoryId })}`,
+  );
+
+export const getSubcategoryCandidates = (country?: string) =>
+  apiFetch<SubcategoryCandidate[]>(
+    `/v1/${PROVIDER}/global-subcategories/candidates${qs({ country })}`,
+  );
+
+export const createGlobalSubcategory = (name: string, globalCategoryId: number) =>
+  apiFetch<GlobalSubcategory>(`/v1/${PROVIDER}/global-subcategories`, {
+    method: 'POST',
+    body: JSON.stringify({ name, globalCategoryId }),
+  });
+
+export const renameGlobalSubcategory = (id: number, name: string) =>
+  apiFetch(`/v1/${PROVIDER}/global-subcategories/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ name }),
+  });
+
+export const deleteGlobalSubcategory = (id: number) =>
+  apiFetch<void>(`/v1/${PROVIDER}/global-subcategories/${id}`, { method: 'DELETE' });
+
+export const assignSubcategories = (id: number, categoryIds: number[]) =>
+  apiFetch(`/v1/${PROVIDER}/global-subcategories/${id}/assign`, {
+    method: 'POST',
+    body: JSON.stringify({ categoryIds }),
+  });
+
+export const unassignSubcategories = (categoryIds: number[]) =>
+  apiFetch(`/v1/${PROVIDER}/global-subcategories/unassign`, {
     method: 'POST',
     body: JSON.stringify({ categoryIds }),
   });

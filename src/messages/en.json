@@ -91,6 +91,42 @@
     "noAccess": "You don't have permission to view this page.",
     "confirmDelete": "Delete this canonical category? Linked ones will be unassigned."
   },
+  "adminSub": {
+    "back": "Back to admin",
+    "title": "Subcategory curation",
+    "subtitle": "Group per-country subcategories under canonical subcategories, within each canonical category.",
+    "canonicalLabel": "Canonical category:",
+    "selectCanonical": "Pick a canonical category…",
+    "pickCanonicalFirst": "Pick a canonical category to start curating its subcategories.",
+    "subcatsTitle": "Canonical subcategories",
+    "newPlaceholder": "New canonical subcategory…",
+    "create": "Create",
+    "delete": "Delete",
+    "linkedCount": "{count} linked",
+    "candidatesTitle": "Per-country subcategories (with products)",
+    "searchPlaceholder": "Filter by name…",
+    "allCountries": "All countries",
+    "assignTo": "Assign to…",
+    "assign": "Assign",
+    "unassign": "Unassign",
+    "selected": "{count} selected",
+    "colCountry": "Country",
+    "colName": "Subcategory",
+    "colParent": "Root category",
+    "colProducts": "Products",
+    "colCurrent": "Current canonical sub",
+    "none": "—",
+    "viewProducts": "View products",
+    "peekSubtitle": "{count} products in this subcategory",
+    "pColName": "Product",
+    "pColPrice": "Price",
+    "pColSold": "Sold",
+    "pColRanking": "Ranking",
+    "pColSeller": "Seller",
+    "close": "Close",
+    "noAccess": "You don't have permission to view this page.",
+    "confirmDelete": "Delete this canonical subcategory? Linked ones will be unassigned."
+  },
   "landing": {
     "hero": {
       "badge": "Market intelligence for e-commerce",
@@ -207,7 +243,9 @@
     "noHistory": "No history for this product.",
     "periodAll": "All history",
     "periodYear": "Last year",
-    "periodMonth": "Last month"
+    "periodMonth": "Last month",
+    "currency": "Currency",
+    "local": "Local"
   },
   "categories": {
     "title": "Category analysis",

@@ -70,6 +70,8 @@ export interface HistoryPoint {
   snapshot_date: string;
   price: number;
   original_price: number | null;
+  usd_price: number | null;
+  currency: string | null;
   ranking_position: number | null;
   sold_count: number | null;
   ml_public_id: string | null;
@@ -131,6 +133,35 @@ export interface CategoryCandidate {
   product_count: number;
   global_category_id: number | null;
   global_name: string | null;
+}
+
+/** A canonical subcategory (nested under a GlobalCategory) in the admin page. */
+export interface GlobalSubcategory {
+  id: number;
+  name: string;
+  slug: string;
+  global_category_id: number;
+  global_category_name: string | null;
+  category_count: number;
+}
+
+/**
+ * A per-country leaf category the admin can link to a canonical subcategory. The
+ * `global_category_*` fields are the canonical category it inherits from its root
+ * parent — the page filters candidates by it so leaves are grouped within their
+ * own canonical category.
+ */
+export interface SubcategoryCandidate {
+  id: number;
+  name: string;
+  country: string;
+  ml_id: string;
+  product_count: number;
+  parent_name: string | null;
+  global_category_id: number | null;
+  global_category_name: string | null;
+  global_subcategory_id: number | null;
+  global_subcategory_name: string | null;
 }
 
 export interface Stats {
