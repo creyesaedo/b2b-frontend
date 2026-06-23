@@ -12,6 +12,7 @@ import type {
   Permission,
   Product,
   ProductListParams,
+  ProductOverrideInput,
   Role,
   Stats,
   SubcategoryCandidate,
@@ -73,8 +74,12 @@ export const googleLoginUrl = () => `${BFF_URL}/auth/google`;
 export const getStats = () => apiFetch<Stats>(`/v1/${PROVIDER}/stats`);
 
 export const getProducts = async (params: ProductListParams = {}) => {
+  const { include_overrides, ...rest } = params;
   const res = await apiFetch<Paginated<Product>>(
-    `/v1/${PROVIDER}/products${qs({ ...params })}`,
+    `/v1/${PROVIDER}/products${qs({
+      ...rest,
+      include_overrides: include_overrides ? 'true' : undefined,
+    })}`,
   );
   return { ...res, data: res.data.map(normalizeProduct) };
 };
@@ -178,6 +183,22 @@ export const unassignSubcategories = (categoryIds: number[]) =>
   apiFetch(`/v1/${PROVIDER}/global-subcategories/unassign`, {
     method: 'POST',
     body: JSON.stringify({ categoryIds }),
+  });
+
+// --- Per-product curation overrides (admin: admin:manage) -------------------
+
+/** Excludes a mis-listed product from the leaf category it was scraped under. */
+export const addProductOverride = (input: ProductOverrideInput) =>
+  apiFetch(`/v1/${PROVIDER}/product-overrides`, {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+
+/** Removes the exclusion (re-includes the product in its leaf). */
+export const removeProductOverride = (input: ProductOverrideInput) =>
+  apiFetch(`/v1/${PROVIDER}/product-overrides/remove`, {
+    method: 'POST',
+    body: JSON.stringify(input),
   });
 
 // --- Roles & permissions (admin: admin:manage; BFF-native /admin/*) ---------

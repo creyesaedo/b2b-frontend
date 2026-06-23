@@ -26,7 +26,7 @@ import * as api from '@/lib/api/endpoints';
 import { formatCurrency, formatNumber } from '@/lib/format';
 import { siteName } from '@/lib/ml-sites';
 import { useAuth } from '@/lib/auth/auth-context';
-import type { Product, SubcategoryCandidate } from '@/lib/types';
+import type { GlobalSubcategory, Product, SubcategoryCandidate } from '@/lib/types';
 
 const ALL = 'all';
 
@@ -45,6 +45,8 @@ export default function AdminSubcategoriesPage() {
   const [target, setTarget] = useState('');
   // The leaf whose products are being peeked at in the modal (null = closed).
   const [peek, setPeek] = useState<SubcategoryCandidate | null>(null);
+  // The canonical subcategory whose products are being viewed (read-only).
+  const [peekSub, setPeekSub] = useState<GlobalSubcategory | null>(null);
 
   const globalsQuery = useQuery({ queryKey: ['globals'], queryFn: api.listGlobalCategories });
   const subcatsQuery = useQuery({
@@ -58,11 +60,25 @@ export default function AdminSubcategoriesPage() {
     queryFn: () => api.getSubcategoryCandidates(),
   });
   // Products of the peeked leaf — only fetched while the modal is open.
+  // `include_overrides` keeps excluded products in the list (flagged) so they
+  // can be toggled back in; public listings hide them.
   const peekQuery = useQuery({
     queryKey: ['peek-products', peek?.id, peek?.country],
     queryFn: () =>
-      api.getProducts({ category_id: String(peek!.id), country: peek!.country, limit: 50 }),
+      api.getProducts({
+        category_id: String(peek!.id),
+        country: peek!.country,
+        limit: 50,
+        include_overrides: true,
+      }),
     enabled: !!peek,
+  });
+  // Products of the peeked canonical subcategory (effective-subcategory view:
+  // linked leaves' products minus excluded/remapped-away plus remapped-in).
+  const peekSubQuery = useQuery({
+    queryKey: ['peek-sub-products', peekSub?.id],
+    queryFn: () => api.getProducts({ global_subcategory_id: String(peekSub!.id), limit: 100 }),
+    enabled: !!peekSub,
   });
 
   // Default to the first canonical category once they load.
@@ -108,6 +124,32 @@ export default function AdminSubcategoriesPage() {
     onSuccess: () => {
       setSelected(new Set());
       invalidate();
+    },
+  });
+  // Set/clear a single product's override on the peeked leaf. `target`:
+  //   number -> remap to that canonical subcategory
+  //   null   -> exclude from the leaf (belongs nowhere)
+  //   'undo' -> remove the override (product returns to its leaf)
+  // Refreshes the leaf modal, the subcategory view and the candidate counts.
+  const overrideMut = useMutation({
+    mutationFn: (vars: {
+      ml_public_id: string;
+      leaf: SubcategoryCandidate;
+      target: number | null | 'undo';
+    }) => {
+      const input = {
+        country: vars.leaf.country,
+        ml_public_id: vars.ml_public_id,
+        source_category_id: vars.leaf.id,
+      };
+      return vars.target === 'undo'
+        ? api.removeProductOverride(input)
+        : api.addProductOverride({ ...input, target_subcategory_id: vars.target });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['peek-products'] });
+      qc.invalidateQueries({ queryKey: ['peek-sub-products'] });
+      qc.invalidateQueries({ queryKey: ['subcat-candidates'] });
     },
   });
 
@@ -230,14 +272,18 @@ export default function AdminSubcategoriesPage() {
                     key={s.id}
                     className="flex items-center justify-between rounded-lg border border-gray-100 px-3 py-2 dark:border-gray-800"
                   >
-                    <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <button
+                      onClick={() => setPeekSub(s)}
+                      className="min-w-0 flex-1 text-left"
+                      title={t('viewSubProducts')}
+                    >
+                      <p className="text-sm font-medium text-gray-900 hover:text-blue-600 dark:text-gray-100">
                         {s.name}
                       </p>
                       <p className="text-xs text-gray-400">
                         {t('linkedCount', { count: s.category_count })}
                       </p>
-                    </div>
+                    </button>
                     <button
                       onClick={() => {
                         if (confirm(t('confirmDelete'))) deleteMut.mutate(s.id);
@@ -385,13 +431,43 @@ export default function AdminSubcategoriesPage() {
 
       {peek && (
         <ProductPeekModal
-          leaf={peek}
+          title={`${siteName(peek.country)} · ${peek.name}`}
+          titleMlId={peek.ml_id}
+          subtitle={t('peekSubtitle', {
+            count: peekQuery.isLoading
+              ? peek.product_count
+              : (peekQuery.data?.data ?? []).filter((p) => !p.is_excluded).length,
+          })}
           products={peekQuery.data?.data ?? []}
           isLoading={peekQuery.isLoading}
           isError={peekQuery.isError}
           onRetry={() => peekQuery.refetch()}
           onClose={() => setPeek(null)}
           locale={locale}
+          subcats={subcats}
+          curation={{
+            isBusy: overrideMut.isPending,
+            onSet: (ml_public_id, target) => overrideMut.mutate({ ml_public_id, target, leaf: peek }),
+          }}
+        />
+      )}
+
+      {peekSub && (
+        <ProductPeekModal
+          title={peekSub.name}
+          subtitle={t('peekSubProducts', {
+            count: peekSubQuery.isLoading
+              ? peekSub.category_count
+              : (peekSubQuery.data?.data ?? []).length,
+          })}
+          products={peekSubQuery.data?.data ?? []}
+          isLoading={peekSubQuery.isLoading}
+          isError={peekSubQuery.isError}
+          onRetry={() => peekSubQuery.refetch()}
+          onClose={() => setPeekSub(null)}
+          locale={locale}
+          subcats={subcats}
+          incomingSubcategoryId={peekSub.id}
         />
       )}
     </>
@@ -405,25 +481,47 @@ function detailHref(p: Product): string | null {
   return null;
 }
 
-/** Lightweight modal listing the products of one leaf category. */
+/**
+ * Products modal — used two ways:
+ *  - Leaf curation (`curation` provided): per-row "move to / exclude" control.
+ *  - Canonical subcategory view (`incomingSubcategoryId` provided): read-only,
+ *    flags products remapped IN.
+ */
 function ProductPeekModal({
-  leaf,
+  title,
+  titleMlId,
+  subtitle,
   products,
   isLoading,
   isError,
   onRetry,
   onClose,
   locale,
+  subcats,
+  curation,
+  incomingSubcategoryId,
 }: {
-  leaf: SubcategoryCandidate;
+  title: string;
+  titleMlId?: string;
+  subtitle: string;
   products: Product[];
   isLoading: boolean;
   isError: boolean;
   onRetry: () => void;
   onClose: () => void;
   locale: string;
+  subcats: GlobalSubcategory[];
+  curation?: { isBusy: boolean; onSet: (mlPublicId: string, target: number | null | 'undo') => void };
+  incomingSubcategoryId?: number;
 }) {
   const t = useTranslations('adminSub');
+  const subcatName = (id: number) => subcats.find((s) => s.id === id)?.name ?? `#${id}`;
+
+  // The select's value encodes a product's current override state.
+  const stateValue = (p: Product) =>
+    !p.is_excluded ? '' : p.override_target_subcategory_id != null
+      ? String(p.override_target_subcategory_id)
+      : 'exclude';
 
   return (
     <div
@@ -437,12 +535,12 @@ function ProductPeekModal({
         <div className="flex items-start justify-between border-b border-gray-100 p-4 dark:border-gray-800">
           <div>
             <p className="text-base font-semibold text-gray-900 dark:text-gray-100">
-              {siteName(leaf.country)} · {leaf.name}
-              <span className="ml-1 text-xs font-normal text-gray-400">{leaf.ml_id}</span>
+              {title}
+              {titleMlId && (
+                <span className="ml-1 text-xs font-normal text-gray-400">{titleMlId}</span>
+              )}
             </p>
-            <p className="text-xs text-gray-500">
-              {t('peekSubtitle', { count: leaf.product_count })}
-            </p>
+            <p className="text-xs text-gray-500">{subtitle}</p>
           </div>
           <button
             onClick={onClose}
@@ -468,13 +566,17 @@ function ProductPeekModal({
                   <TableHeaderCell className="text-right">{t('pColSold')}</TableHeaderCell>
                   <TableHeaderCell className="text-right">{t('pColRanking')}</TableHeaderCell>
                   <TableHeaderCell>{t('pColSeller')}</TableHeaderCell>
+                  {curation && (
+                    <TableHeaderCell className="text-right">{t('pColActions')}</TableHeaderCell>
+                  )}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {products.map((p) => {
                   const href = detailHref(p);
+                  const dim = curation && p.is_excluded;
                   return (
-                    <TableRow key={p.id}>
+                    <TableRow key={p.id} className={dim ? 'opacity-60' : undefined}>
                       <TableCell className="max-w-xs whitespace-normal break-words">
                         {href ? (
                           <Link
@@ -486,6 +588,24 @@ function ProductPeekModal({
                           </Link>
                         ) : (
                           <span className="text-gray-900 dark:text-gray-100">{p.name}</span>
+                        )}
+                        {/* Remapped IN (subcategory view) */}
+                        {incomingSubcategoryId && p.is_excluded && (
+                          <Badge color="emerald" size="xs" className="ml-2 align-middle">
+                            {t('movedHere')}
+                          </Badge>
+                        )}
+                        {/* Override state (leaf curation view) */}
+                        {curation && p.is_excluded && (
+                          <Badge
+                            color={p.override_target_subcategory_id != null ? 'blue' : 'amber'}
+                            size="xs"
+                            className="ml-2 align-middle"
+                          >
+                            {p.override_target_subcategory_id != null
+                              ? `→ ${subcatName(p.override_target_subcategory_id)}`
+                              : t('excludedBadge')}
+                          </Badge>
                         )}
                       </TableCell>
                       <TableCell className="text-right tabular-nums">
@@ -500,6 +620,39 @@ function ProductPeekModal({
                       <TableCell className="text-gray-700 dark:text-gray-300">
                         {p.seller?.nickname ?? '—'}
                       </TableCell>
+                      {curation && (
+                        <TableCell className="text-right">
+                          {p.ml_public_id ? (
+                            <select
+                              value={stateValue(p)}
+                              disabled={curation.isBusy}
+                              onChange={(e) => {
+                                const v = e.target.value;
+                                curation.onSet(
+                                  p.ml_public_id!,
+                                  v === '' ? 'undo' : v === 'exclude' ? null : Number(v),
+                                );
+                              }}
+                              className="max-w-[160px] rounded border border-gray-300 bg-white px-1.5 py-1 text-xs text-gray-700 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                              title={t('rowActionHint')}
+                            >
+                              <option value="">{t('actHere')}</option>
+                              <optgroup label={t('actMoveTo')}>
+                                {subcats.map((s) => (
+                                  <option key={s.id} value={String(s.id)}>
+                                    {s.name}
+                                  </option>
+                                ))}
+                              </optgroup>
+                              <option value="exclude">{t('actExcludeOpt')}</option>
+                            </select>
+                          ) : (
+                            <span className="text-xs text-gray-400" title={t('noPublicIdHint')}>
+                              {t('noPublicId')}
+                            </span>
+                          )}
+                        </TableCell>
+                      )}
                     </TableRow>
                   );
                 })}

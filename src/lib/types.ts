@@ -45,6 +45,17 @@ export interface Product {
   snapshot_count: number;
   /** Date of the most recent snapshot for this listing. */
   last_snapshot_date: string;
+  /**
+   * Only present when the listing was fetched with `include_overrides` (admin
+   * curation): true if this product has a curation override removing it from its
+   * leaf (either a pure exclusion or a remap).
+   */
+  is_excluded?: boolean;
+  /**
+   * The canonical subcategory this product was remapped to, when `is_excluded`
+   * and it's a remap (null = the override is a pure exclusion).
+   */
+  override_target_subcategory_id?: number | null;
 }
 
 export interface Paginated<T> {
@@ -182,4 +193,17 @@ export interface ProductListParams {
   date_from?: string;
   date_to?: string;
   search?: string;
+  /** Canonical subcategory view (effective-subcategory query, honors overrides). */
+  global_subcategory_id?: string;
+  /** Admin curation: keep excluded products in the list, flagged `is_excluded`. */
+  include_overrides?: boolean;
+}
+
+/** A per-product curation override (admin): an exclusion or a remap. */
+export interface ProductOverrideInput {
+  country: string;
+  ml_public_id: string;
+  source_category_id: number;
+  /** Omit / null = exclude from the leaf; a canonical subcategory id = remap to it. */
+  target_subcategory_id?: number | null;
 }
