@@ -476,9 +476,12 @@ export default function AdminSubcategoriesPage() {
 
 /** Internal detail/history link for a product row (same logic as the explorer). */
 function detailHref(p: Product): string | null {
-  if (p.ml_public_id) return `/products/${encodeURIComponent(p.ml_public_id)}?listing=1`;
-  if (p.catalog_id) return `/products/${encodeURIComponent(p.catalog_id)}`;
-  return null;
+  // Identify by canonical_id (catalog_id for catalog products, else ml_public_id).
+  // The ?listing flag follows catalog membership (catalog_id), not product_type.
+  const id = p.canonical_id ?? p.catalog_id ?? p.ml_public_id;
+  if (!id) return null;
+  const isCatalog = !!p.catalog_id;
+  return `/products/${encodeURIComponent(id)}${isCatalog ? '' : '?listing=1'}`;
 }
 
 /**

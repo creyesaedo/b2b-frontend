@@ -8,6 +8,7 @@ import type {
   GlobalCategory,
   GlobalSubcategory,
   HistoryPoint,
+  HistoryResponse,
   Paginated,
   Permission,
   Product,
@@ -16,6 +17,8 @@ import type {
   Role,
   Stats,
   SubcategoryCandidate,
+  TrackedProduct,
+  VisitPoint,
 } from '../types';
 
 const PROVIDER = 'ml';
@@ -44,7 +47,9 @@ function normalizeHistory(h: HistoryPoint): HistoryPoint {
     ...h,
     price: num(h.price) ?? 0,
     original_price: num(h.original_price),
+    discount_pct: num(h.discount_pct),
     usd_price: num(h.usd_price),
+    weekly_visits: num(h.weekly_visits),
   };
 }
 
@@ -90,11 +95,16 @@ export const getProductCatalog = (search: string) =>
 export const getProductHistory = async (params: {
   ml_public_id?: string;
   catalog_id?: string;
-}) => {
-  const res = await apiFetch<HistoryPoint[]>(
+}): Promise<HistoryResponse> => {
+  const res = await apiFetch<HistoryResponse>(
     `/v1/${PROVIDER}/products/history${qs({ ...params })}`,
   );
-  return res.map(normalizeHistory);
+  return {
+    history: res.history.map(normalizeHistory),
+    visits: res.visits.map(
+      (v): VisitPoint => ({ date: v.date, weekly_visits: num(v.weekly_visits) }),
+    ),
+  };
 };
 
 export const getCategories = (params: { country?: string; parent_only?: boolean } = {}) =>
@@ -108,6 +118,29 @@ export const getCategories = (params: { country?: string; parent_only?: boolean 
 /** Category facets that have products (canonical + unmapped) for the filter. */
 export const getProductCategories = (country?: string) =>
   apiFetch<CategoryFacet[]>(`/v1/${PROVIDER}/products/categories${qs({ country })}`);
+
+// --- Client product tracking (per authenticated user) -----------------------
+
+/** The current client's tracking subscriptions (client_id is server-derived). */
+export const getTrackedProducts = () =>
+  apiFetch<TrackedProduct[]>(`/v1/${PROVIDER}/tracked-products`);
+
+/** Subscribe to tracking a product URL. `cadence_hours` is floored at 24 server-side. */
+export const subscribeTrackedProduct = (input: {
+  url: string;
+  country: string;
+  cadence_hours?: number;
+}) =>
+  apiFetch<TrackedProduct>(`/v1/${PROVIDER}/tracked-products`, {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+
+/** Cancel one of the client's subscriptions. */
+export const unsubscribeTrackedProduct = (id: number) =>
+  apiFetch<{ deleted: boolean }>(`/v1/${PROVIDER}/tracked-products/${id}`, {
+    method: 'DELETE',
+  });
 
 // --- Canonical category curation (admin: admin:manage) ----------------------
 

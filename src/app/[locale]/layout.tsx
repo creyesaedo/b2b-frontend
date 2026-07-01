@@ -5,6 +5,7 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { Providers } from '@/components/providers';
 import { routing, type Locale } from '@/i18n/routing';
+import 'flag-icons/css/flag-icons.min.css';
 import '../globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });

@@ -1,0 +1,376 @@
+{
+  "communities": {
+    "0": [
+      "api_client",
+      "api_client_apifetch",
+      "api_client_qs",
+      "api_endpoints",
+      "api_endpoints_addproductoverride",
+      "api_endpoints_assigncategories",
+      "api_endpoints_assignsubcategories",
+      "api_endpoints_createglobalcategory",
+      "api_endpoints_createglobalsubcategory",
+      "api_endpoints_createpermission",
+      "api_endpoints_createrole",
+      "api_endpoints_deleteglobalcategory",
+      "api_endpoints_deleteglobalsubcategory",
+      "api_endpoints_getcategories",
+      "api_endpoints_getcategorycandidates",
+      "api_endpoints_getme",
+      "api_endpoints_getproductcatalog",
+      "api_endpoints_getproductcategories",
+      "api_endpoints_getproducthistory",
+      "api_endpoints_getproducts",
+      "api_endpoints_getsubcategorycandidates",
+      "api_endpoints_listglobalcategories",
+      "api_endpoints_listglobalsubcategories",
+      "api_endpoints_listpermissions",
+      "api_endpoints_listroles",
+      "api_endpoints_login",
+      "api_endpoints_logout",
+      "api_endpoints_normalizehistory",
+      "api_endpoints_normalizeproduct",
+      "api_endpoints_num",
+      "api_endpoints_register",
+      "api_endpoints_removeproductoverride",
+      "api_endpoints_renameglobalcategory",
+      "api_endpoints_renameglobalsubcategory",
+      "api_endpoints_setrolepermissions",
+      "api_endpoints_unassigncategories",
+      "api_endpoints_unassignsubcategories",
+      "lib_types",
+      "lib_types_catalogproduct",
+      "lib_types_category",
+      "lib_types_categorycandidate",
+      "lib_types_categoryfacet",
+      "lib_types_globalcategory",
+      "lib_types_historypoint",
+      "lib_types_paginated",
+      "lib_types_permission",
+      "lib_types_productcategoryref",
+      "lib_types_productlistparams",
+      "lib_types_productoverrideinput",
+      "lib_types_productsellerref",
+      "lib_types_role",
+      "lib_types_stats"
+    ],
+    "1": [
+      "api_endpoints_getstats",
+      "app_data_state",
+      "app_data_state_datastate",
+      "app_page_header",
+      "app_page_header_pageheader",
+      "catalogid_page",
+      "catalogid_page_chartdatum",
+      "catalogid_page_charttooltip",
+      "catalogid_page_currency",
+      "catalogid_page_historychart",
+      "catalogid_page_kpi",
+      "catalogid_page_period",
+      "catalogid_page_productdetailpage",
+      "categories_page_categoriespage",
+      "categories_page_categoryagg",
+      "dashboard_market_map",
+      "dashboard_market_map_marketmap",
+      "dashboard_market_map_marketmapprops",
+      "dashboard_market_map_ml_by_numeric",
+      "dashboard_page",
+      "dashboard_page_dashboardpage",
+      "dashboard_page_insight",
+      "lib_format",
+      "lib_format_formatcurrency",
+      "lib_format_formatdate",
+      "lib_format_formatnumber",
+      "lib_format_formatpercent",
+      "lib_ml_sites",
+      "lib_ml_sites_site_names",
+      "lib_ml_sites_sitename",
+      "lib_types_globalsubcategory",
+      "lib_types_product",
+      "lib_types_subcategorycandidate",
+      "lib_use_debounce",
+      "lib_use_debounce_usedebounce",
+      "products_page",
+      "products_page_detailhref",
+      "products_page_productrow",
+      "products_page_productspage",
+      "roles_page",
+      "sellers_page",
+      "sellers_page_selleragg",
+      "sellers_page_sellerspage",
+      "src_app_locale_app_admin_categories_page_tsx_categories_page",
+      "src_app_locale_app_categories_page_tsx_categories_page",
+      "subcategories_page",
+      "subcategories_page_detailhref",
+      "subcategories_page_productpeekmodal"
+    ],
+    "2": [
+      "api_endpoints_googleloginurl",
+      "app_app_shell",
+      "app_app_shell_nav",
+      "auth_auth_form",
+      "auth_auth_form_authform",
+      "auth_auth_form_field",
+      "auth_auth_form_formvalues",
+      "auth_auth_form_googleicon",
+      "auth_auth_form_schema",
+      "components_brand",
+      "components_brand_brand",
+      "components_locale_switcher",
+      "components_locale_switcher_localeswitcher",
+      "i18n_navigation",
+      "i18n_navigation_link_redirect_usepathname_userouter_getpathname",
+      "i18n_request",
+      "i18n_routing",
+      "i18n_routing_locale",
+      "i18n_routing_routing",
+      "landing_site_header",
+      "landing_site_header_siteheader",
+      "locale_page",
+      "locale_page_landingpage",
+      "login_page",
+      "login_page_loginpage",
+      "signup_page",
+      "signup_page_signuppage",
+      "src_middleware",
+      "src_middleware_config",
+      "src_middleware_intlmiddleware",
+      "src_middleware_middleware"
+    ],
+    "3": [
+      "admin_page",
+      "admin_page_admincard",
+      "admin_page_adminhomepage",
+      "admin_page_section",
+      "api_client_apierror",
+      "api_client_apierror_constructor",
+      "app_app_shell_appshell",
+      "app_auth_guard",
+      "app_auth_guard_authguard",
+      "app_layout",
+      "app_layout_applayout",
+      "auth_auth_context",
+      "auth_auth_context_authcontext",
+      "auth_auth_context_authcontextvalue",
+      "auth_auth_context_authprovider",
+      "auth_auth_context_useauth",
+      "categories_page_admincategoriespage",
+      "components_providers",
+      "components_providers_providers",
+      "lib_query",
+      "lib_query_queryprovider",
+      "lib_types_authuser",
+      "locale_layout",
+      "locale_layout_generatestaticparams",
+      "locale_layout_inter",
+      "locale_layout_localelayout",
+      "locale_layout_metadata",
+      "roles_page_rolespage",
+      "subcategories_page_adminsubcategoriespage"
+    ],
+    "4": [
+      "package",
+      "package_description",
+      "package_devdependencies",
+      "package_devdependencies_autoprefixer",
+      "package_devdependencies_eslint",
+      "package_devdependencies_eslint_config_next",
+      "package_devdependencies_postcss",
+      "package_devdependencies_tailwindcss",
+      "package_devdependencies_types_node",
+      "package_devdependencies_types_react",
+      "package_devdependencies_types_react_dom",
+      "package_devdependencies_types_react_simple_maps",
+      "package_devdependencies_typescript",
+      "package_name",
+      "package_private",
+      "package_scripts",
+      "package_scripts_build",
+      "package_scripts_dev",
+      "package_scripts_lint",
+      "package_scripts_start",
+      "package_version"
+    ],
+    "5": [
+      "tsconfig",
+      "tsconfig_compileroptions",
+      "tsconfig_compileroptions_allowjs",
+      "tsconfig_compileroptions_esmoduleinterop",
+      "tsconfig_compileroptions_incremental",
+      "tsconfig_compileroptions_isolatedmodules",
+      "tsconfig_compileroptions_jsx",
+      "tsconfig_compileroptions_lib",
+      "tsconfig_compileroptions_module",
+      "tsconfig_compileroptions_moduleresolution",
+      "tsconfig_compileroptions_noemit",
+      "tsconfig_compileroptions_paths",
+      "tsconfig_compileroptions_plugins",
+      "tsconfig_compileroptions_resolvejsonmodule",
+      "tsconfig_compileroptions_skiplibcheck",
+      "tsconfig_compileroptions_strict",
+      "tsconfig_compileroptions_target",
+      "tsconfig_exclude",
+      "tsconfig_include",
+      "tsconfig_paths"
+    ],
+    "6": [
+      "package_dependencies",
+      "package_dependencies_hookform_resolvers",
+      "package_dependencies_lucide_react",
+      "package_dependencies_next",
+      "package_dependencies_next_intl",
+      "package_dependencies_react",
+      "package_dependencies_react_dom",
+      "package_dependencies_react_hook_form",
+      "package_dependencies_react_simple_maps",
+      "package_dependencies_recharts",
+      "package_dependencies_tanstack_react_query",
+      "package_dependencies_tremor_react",
+      "package_dependencies_world_atlas",
+      "package_dependencies_zod"
+    ],
+    "7": [
+      "next_config",
+      "next_config_nextconfig",
+      "next_config_withnextintl"
+    ],
+    "8": [
+      "eslintrc",
+      "eslintrc_extends"
+    ],
+    "9": [
+      "postcss_config",
+      "postcss_config_config"
+    ],
+    "10": [
+      "tailwind_config",
+      "tailwind_config_config"
+    ]
+  },
+  "cohesion": {
+    "0": 0.07767722473604827,
+    "1": 0.1099290780141844,
+    "2": 0.12043010752688173,
+    "3": 0.0960591133004926,
+    "4": 0.09523809523809523,
+    "5": 0.1,
+    "6": 0.14285714285714285,
+    "7": 0.6666666666666666,
+    "8": 1.0,
+    "9": 1.0,
+    "10": 1.0
+  },
+  "gods": [
+    {
+      "id": "api_client_apifetch",
+      "label": "apiFetch()",
+      "degree": 31
+    },
+    {
+      "id": "tsconfig_compileroptions",
+      "label": "compilerOptions",
+      "degree": 16
+    },
+    {
+      "id": "auth_auth_context_useauth",
+      "label": "useAuth()",
+      "degree": 15
+    },
+    {
+      "id": "lib_format_formatnumber",
+      "label": "formatNumber()",
+      "degree": 14
+    },
+    {
+      "id": "lib_ml_sites_sitename",
+      "label": "siteName()",
+      "degree": 11
+    },
+    {
+      "id": "api_client_qs",
+      "label": "qs()",
+      "degree": 10
+    },
+    {
+      "id": "app_data_state_datastate",
+      "label": "DataState()",
+      "degree": 9
+    },
+    {
+      "id": "app_page_header_pageheader",
+      "label": "PageHeader()",
+      "degree": 9
+    },
+    {
+      "id": "products_page_productrow",
+      "label": "ProductRow()",
+      "degree": 7
+    },
+    {
+      "id": "auth_auth_form_authform",
+      "label": "AuthForm()",
+      "degree": 6
+    }
+  ],
+  "surprises": [
+    {
+      "source": "AdminCategoriesPage()",
+      "target": "useAuth()",
+      "source_files": [
+        "src/app/[locale]/(app)/admin/categories/page.tsx",
+        "src/lib/auth/auth-context.tsx"
+      ],
+      "confidence": "INFERRED",
+      "relation": "calls",
+      "why": "inferred connection - not explicitly stated in source; peripheral node `AdminCategoriesPage()` unexpectedly reaches hub `useAuth()`"
+    },
+    {
+      "source": "AdminHomePage()",
+      "target": "useAuth()",
+      "source_files": [
+        "src/app/[locale]/(app)/admin/page.tsx",
+        "src/lib/auth/auth-context.tsx"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "peripheral node `AdminHomePage()` unexpectedly reaches hub `useAuth()`"
+    },
+    {
+      "source": "RolesPage()",
+      "target": "useAuth()",
+      "source_files": [
+        "src/app/[locale]/(app)/admin/roles/page.tsx",
+        "src/lib/auth/auth-context.tsx"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "peripheral node `RolesPage()` unexpectedly reaches hub `useAuth()`"
+    },
+    {
+      "source": "AdminSubcategoriesPage()",
+      "target": "siteName()",
+      "source_files": [
+        "src/app/[locale]/(app)/admin/subcategories/page.tsx",
+        "src/lib/ml-sites.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "ProductDetailPage()",
+      "target": "formatNumber()",
+      "source_files": [
+        "src/app/[locale]/(app)/products/[catalogId]/page.tsx",
+        "src/lib/format.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "peripheral node `ProductDetailPage()` unexpectedly reaches hub `formatNumber()`"
+    }
+  ],
+  "tokens": {
+    "input": 0,
+    "output": 0
+  }
+}

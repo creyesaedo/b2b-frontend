@@ -25,7 +25,7 @@ import { DataState } from '@/components/app/data-state';
 import { PageHeader } from '@/components/app/page-header';
 import { getProductCategories, getProducts, getStats } from '@/lib/api/endpoints';
 import { formatCurrency, formatDate, formatNumber, formatPercent } from '@/lib/format';
-import { siteName } from '@/lib/ml-sites';
+import { siteCountryCode, siteName } from '@/lib/ml-sites';
 import { useDebounce } from '@/lib/use-debounce';
 import { Link } from '@/i18n/navigation';
 import type { Product } from '@/lib/types';
@@ -83,22 +83,29 @@ export default function ProductsPage() {
   const meta = data?.meta;
   const isEmpty = !!data && rows.length === 0;
 
+  // Flag shown in the country select's closed control. Tremor renders only the
+  // selected item's text in the trigger, so the per-item flag span is dropped;
+  // the `icon` prop is the supported slot for leading content. Undefined when
+  // "all countries" is selected so no flag is shown.
+  const SelectedCountryFlag = useMemo(() => {
+    const code = country === ALL ? null : siteCountryCode(country);
+    if (!code) return undefined;
+    const Flag = () => <span className={`fi fi-${code} !h-4 !w-5`} />;
+    Flag.displayName = 'SelectedCountryFlag';
+    return Flag;
+  }, [country]);
+
+  // Pins the header row while the table body scrolls. The background must match
+  // the Card so scrolled rows hide behind the header instead of bleeding through.
+  const headerClass =
+    'sticky top-0 z-10 border-b border-tremor-border bg-white dark:border-dark-tremor-border dark:bg-gray-900';
+
   return (
-    <>
-      <PageHeader
-        title={t('title')}
-        subtitle={t('subtitle')}
-        action={
-          meta ? (
-            <span className="text-sm text-gray-500">
-              {t('resultsCount', { count: formatNumber(meta.total, locale) })}
-            </span>
-          ) : undefined
-        }
-      />
+    <div className="flex h-full flex-col">
+      <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
       {/* Filters */}
-      <Card className="mb-4 dark:!bg-gray-900">
+      <Card className="mb-4 !p-3 dark:!bg-gray-900">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <TextInput
             icon={Search}
@@ -110,6 +117,7 @@ export default function ProductsPage() {
             }}
           />
           <Select
+            icon={SelectedCountryFlag}
             value={country}
             onValueChange={(v) => {
               setCountry(v);
@@ -120,12 +128,16 @@ export default function ProductsPage() {
             <SelectItem value={ALL}>{t('allCountries')}</SelectItem>
             {(stats?.by_country ?? []).map((c) => (
               <SelectItem key={c.country} value={c.country}>
+                {siteCountryCode(c.country) && (
+                  <span className={`fi fi-${siteCountryCode(c.country)} mr-2`} />
+                )}
                 {siteName(c.country)}
               </SelectItem>
             ))}
           </Select>
           <SearchSelect
             value={categorySel}
+            enableClear={categorySel !== ALL}
             onValueChange={(v) => {
               setCategorySel(v || ALL);
               resetPage();
@@ -139,13 +151,17 @@ export default function ProductsPage() {
               >
                 {c.kind === 'category' && country === ALL
                   ? `${c.name} · ${siteName(c.country)}`
-                  : c.name}{' '}
-                ({c.product_count})
+                  : c.name}
               </SearchSelectItem>
             ))}
           </SearchSelect>
-          <div className="flex items-center justify-end gap-2 self-center">
-            <span className="whitespace-nowrap text-sm font-medium text-gray-500 dark:text-gray-400">
+          <div className="flex items-center gap-2 self-center">
+            {meta && (
+              <span className="whitespace-nowrap text-sm font-medium text-gray-500 dark:text-gray-400">
+                {t('resultsCount', { count: formatNumber(meta.total, locale) })}
+              </span>
+            )}
+            <span className="ml-auto whitespace-nowrap text-sm font-medium text-gray-500 dark:text-gray-400">
               {t('currency')}:
             </span>
             <div className="inline-flex items-center rounded-lg border border-gray-200 p-0.5 dark:border-gray-700">
@@ -169,37 +185,41 @@ export default function ProductsPage() {
         </div>
       </Card>
 
-      <Card className="dark:!bg-gray-900">
+      <Card className="flex min-h-0 flex-1 flex-col !py-3 dark:!bg-gray-900">
         <DataState
           isLoading={isLoading}
           isError={isError}
           isEmpty={isEmpty}
           onRetry={() => refetch()}
         >
-          <Table>
+          <Table className="min-h-0 flex-1">
             <TableHead>
               <TableRow>
-                <TableHeaderCell>{t('colName')}</TableHeaderCell>
-                <TableHeaderCell>{common('country')}</TableHeaderCell>
-                <TableHeaderCell className="text-right">{t('colPrice')}</TableHeaderCell>
-                <TableHeaderCell className="text-right">{t('colDiscount')}</TableHeaderCell>
-                <TableHeaderCell className="text-right">{t('colSold')}</TableHeaderCell>
-                <TableHeaderCell className="text-right">{t('colRating')}</TableHeaderCell>
-                <TableHeaderCell className="text-right">{t('colRanking')}</TableHeaderCell>
-                <TableHeaderCell>{t('colSeller')}</TableHeaderCell>
-                <TableHeaderCell className="text-right">{t('colHistory')}</TableHeaderCell>
-                <TableHeaderCell className="text-right">{t('colLastSnapshot')}</TableHeaderCell>
+                <TableHeaderCell className={`${headerClass} w-full min-w-[22rem]`}>
+                  {t('colName')}
+                </TableHeaderCell>
+                {country === ALL && (
+                  <TableHeaderCell className={headerClass}>{common('country')}</TableHeaderCell>
+                )}
+                <TableHeaderCell className={`${headerClass} text-right`}>{t('colPrice')}</TableHeaderCell>
+                <TableHeaderCell className={`${headerClass} text-right`}>{t('colDiscount')}</TableHeaderCell>
+                <TableHeaderCell className={`${headerClass} text-right`}>{t('colSold')}</TableHeaderCell>
+                <TableHeaderCell className={`${headerClass} text-right`}>{t('colRating')}</TableHeaderCell>
+                <TableHeaderCell className={`${headerClass} text-right`}>{t('colRanking')}</TableHeaderCell>
+                <TableHeaderCell className={headerClass}>{t('colSeller')}</TableHeaderCell>
+                <TableHeaderCell className={`${headerClass} text-right`}>{t('colHistory')}</TableHeaderCell>
+                <TableHeaderCell className={`${headerClass} text-right`}>{t('colLastSnapshot')}</TableHeaderCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {rows.map((p) => (
-                <ProductRow key={p.id} product={p} currency={currency} locale={locale} officialLabel={t('official')} />
+                <ProductRow key={p.id} product={p} currency={currency} locale={locale} officialLabel={t('official')} showCountry={country === ALL} />
               ))}
             </TableBody>
           </Table>
 
           {meta && (
-            <div className="mt-4 flex items-center justify-between">
+            <div className="mt-4 flex shrink-0 items-center justify-between">
               <span className="text-sm text-gray-500">
                 {common('page')} {meta.page} {common('of')} {meta.total_pages || 1}
               </span>
@@ -228,15 +248,23 @@ export default function ProductsPage() {
           )}
         </DataState>
       </Card>
-    </>
+    </div>
   );
 }
 
 function detailHref(p: Product): string | null {
-  // Prefer the listing id so the detail history matches this row's snapshot_count.
-  if (p.ml_public_id) return `/products/${encodeURIComponent(p.ml_public_id)}?listing=1`;
-  if (p.catalog_id) return `/products/${encodeURIComponent(p.catalog_id)}`;
-  return null;
+  // Identify by canonical_id (catalog_id for catalog products, else ml_public_id)
+  // so a catalog opens its catalog-level history, not just the current winner's.
+  // `?listing=1` only for non-catalog listings (their history is keyed by
+  // ml_public_id). Falls back to the raw ids for rows predating canonical_id.
+  const id = p.canonical_id ?? p.catalog_id ?? p.ml_public_id;
+  if (!id) return null;
+  // The history is keyed by catalog_id when the product has one (canonical_id ==
+  // catalog_id), else by ml_public_id (?listing=1). This follows catalog
+  // membership, not product_type — a /up/ user_product WITH a catalog_id still
+  // opens its catalog-level history.
+  const isCatalog = !!p.catalog_id;
+  return `/products/${encodeURIComponent(id)}${isCatalog ? '' : '?listing=1'}`;
 }
 
 function ProductRow({
@@ -244,11 +272,13 @@ function ProductRow({
   currency,
   locale,
   officialLabel,
+  showCountry,
 }: {
   product: Product;
   currency: 'local' | 'usd';
   locale: string;
   officialLabel: string;
+  showCountry: boolean;
 }) {
   const href = detailHref(p);
   const price =
@@ -258,7 +288,7 @@ function ProductRow({
 
   return (
     <TableRow className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-      <TableCell className="max-w-xs whitespace-normal break-words align-top">
+      <TableCell className="w-full min-w-[22rem] max-w-xl whitespace-normal break-words align-top">
         {href ? (
           <Link href={href} className="font-medium text-blue-600 hover:underline">
             {p.name}
@@ -268,9 +298,11 @@ function ProductRow({
         )}
         <span className="mt-0.5 block text-xs text-gray-400">{p.category?.name}</span>
       </TableCell>
-      <TableCell className="whitespace-nowrap text-gray-700 dark:text-gray-300">
-        {siteName(p.country)}
-      </TableCell>
+      {showCountry && (
+        <TableCell className="whitespace-nowrap text-gray-700 dark:text-gray-300">
+          {siteName(p.country)}
+        </TableCell>
+      )}
       <TableCell className="text-right tabular-nums">{price}</TableCell>
       <TableCell className="text-right tabular-nums">
         {p.discount_pct ? (

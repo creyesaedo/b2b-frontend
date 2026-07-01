@@ -35,15 +35,23 @@ export interface Product {
   brand: string | null;
   ml_public_id: string | null;
   catalog_id: string | null;
+  /**
+   * Stable product identity: catalog_id for catalog products, else ml_public_id
+   * (the listing). Use THIS — not ml_public_id — to dedupe/key/navigate, so a
+   * catalog's rotating buy-box winners are one product. `product_type` says which.
+   */
+  canonical_id: string | null;
+  /** URL-form class: 'catalog' (/p/), 'user_product' (/up/), 'listing' (classic). */
+  product_type: 'catalog' | 'user_product' | 'listing' | null;
   shipping_type: string | null;
   is_cbt: boolean;
   usd_price: number | null;
   currency: string | null;
   category: ProductCategoryRef;
   seller: ProductSellerRef;
-  /** How many snapshots we have for this listing (ml_public_id). */
+  /** How many snapshots we have for this product (by canonical_id). */
   snapshot_count: number;
-  /** Date of the most recent snapshot for this listing. */
+  /** Date of the most recent snapshot for this product. */
   last_snapshot_date: string;
   /**
    * Only present when the listing was fetched with `include_overrides` (admin
@@ -81,12 +89,52 @@ export interface HistoryPoint {
   snapshot_date: string;
   price: number;
   original_price: number | null;
+  /** Discount applied at this snapshot, as a percentage (e.g. 9.16 = 9.16%). */
+  discount_pct: number | null;
   usd_price: number | null;
   currency: string | null;
   ranking_position: number | null;
   sold_count: number | null;
+  /** Visits in the trailing 7 days at the time of the snapshot. */
+  weekly_visits: number | null;
   ml_public_id: string | null;
   catalog_id: string | null;
+  /** URL-form class: 'catalog' (/p/), 'user_product' (/up/), 'listing' (classic). */
+  product_type: 'catalog' | 'user_product' | 'listing' | null;
+  /** The buy-box winner (seller) at this snapshot, for the winners menu. */
+  seller: { nickname: string | null; is_official_store: boolean } | null;
+}
+
+/** One point on the daily visits series (separate from the snapshot history). */
+export interface VisitPoint {
+  /** Calendar day of the visits count (ISO date). */
+  date: string;
+  weekly_visits: number | null;
+}
+
+/**
+ * Product history response. Snapshots (`history`) are written insert-on-change
+ * for tracked products, so they are sparse; the visits series (`visits`) is the
+ * dense daily demand curve kept in its own table.
+ */
+export interface HistoryResponse {
+  history: HistoryPoint[];
+  visits: VisitPoint[];
+}
+
+/** A client's product-tracking subscription. */
+export interface TrackedProduct {
+  id: number;
+  client_id: string;
+  url: string;
+  country: string;
+  catalog_id: string | null;
+  ml_public_id: string | null;
+  cadence_hours: number;
+  next_run_at: string;
+  active: boolean;
+  last_run_at: string | null;
+  created_at: string;
 }
 
 export interface Category {
