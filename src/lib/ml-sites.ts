@@ -34,6 +34,9 @@ const SITE_COUNTRY_CODES: Record<string, string> = {
   MRD: 'do',
 };
 
+/** All known MercadoLibre site IDs, for country selectors. */
+export const SITE_CODES = Object.keys(SITE_NAMES);
+
 export function siteName(code: string | null | undefined): string {
   if (!code) return '—';
   return SITE_NAMES[code] ?? code;

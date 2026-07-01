@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import {
   BarChart3,
+  Bookmark,
   LayoutDashboard,
   LogOut,
   Package,
@@ -18,6 +19,7 @@ import { useAuth } from '@/lib/auth/auth-context';
 const NAV = [
   { href: '/dashboard', icon: LayoutDashboard, key: 'dashboard', permission: null },
   { href: '/products', icon: Package, key: 'products', permission: null },
+  { href: '/tracked', icon: Bookmark, key: 'tracked', permission: null },
   { href: '/categories', icon: Tags, key: 'categories', permission: null },
   { href: '/sellers', icon: Store, key: 'sellers', permission: null },
   { href: '/admin', icon: SlidersHorizontal, key: 'admin', permission: 'admin:manage' },

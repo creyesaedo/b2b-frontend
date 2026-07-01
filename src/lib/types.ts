@@ -113,6 +113,25 @@ export interface VisitPoint {
 }
 
 /**
+ * One reconstructed daily row for a tracked product's snapshots table. The wide
+ * `products` table is insert-on-change (sparse), so days that were checked but
+ * unchanged have no real snapshot; we carry forward the latest snapshot's values
+ * and pair them with that day's `weekly_visits` from the dense visits series, so
+ * every checked day shows a row. See `buildDailySnapshots` in `lib/tracked.ts`.
+ */
+export interface DailySnapshot {
+  /** The checked day (ISO date, from the visits series). */
+  date: string;
+  price: number | null;
+  discount_pct: number | null;
+  ranking_position: number | null;
+  sold_count: number | null;
+  usd_price: number | null;
+  currency: string | null;
+  weekly_visits: number | null;
+}
+
+/**
  * Product history response. Snapshots (`history`) are written insert-on-change
  * for tracked products, so they are sparse; the visits series (`visits`) is the
  * dense daily demand curve kept in its own table.
