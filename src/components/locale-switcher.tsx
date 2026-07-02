@@ -4,12 +4,6 @@ import { useLocale } from 'next-intl';
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 
-/** Flag emoji shown next to each locale in the switcher. */
-const LOCALE_FLAGS: Record<string, string> = {
-  es: '🇪🇸',
-  en: '🇬🇧',
-};
-
 /** Toggles between the available locales, preserving the current path. */
 export function LocaleSwitcher() {
   const locale = useLocale();
@@ -30,9 +24,6 @@ export function LocaleSwitcher() {
           }`}
           aria-current={loc === locale}
         >
-          <span aria-hidden="true" className="text-sm leading-none">
-            {LOCALE_FLAGS[loc]}
-          </span>
           {loc}
         </button>
       ))}

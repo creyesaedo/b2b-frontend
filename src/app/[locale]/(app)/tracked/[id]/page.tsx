@@ -107,7 +107,7 @@ export default function TrackedDetailPage() {
       </h1>
       {subscription && (
         <p className="mb-5 text-sm text-gray-500 dark:text-gray-400">
-          {siteName(subscription.country)} · {t('cadenceHours', { hours: subscription.cadence_hours })}
+          {siteName(subscription.country)} · {t('cadenceDays', { days: Math.round(subscription.cadence_hours / 24) })}
         </p>
       )}
 

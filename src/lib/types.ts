@@ -149,6 +149,8 @@ export interface TrackedProduct {
   country: string;
   catalog_id: string | null;
   ml_public_id: string | null;
+  /** Product name from the latest snapshot; null until the first snapshot lands. */
+  name: string | null;
   cadence_hours: number;
   next_run_at: string;
   active: boolean;

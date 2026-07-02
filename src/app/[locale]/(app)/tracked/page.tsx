@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocale, useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Badge,
   Button,
@@ -24,11 +24,21 @@ import { PageHeader } from '@/components/app/page-header';
 import { Link } from '@/i18n/navigation';
 import * as api from '@/lib/api/endpoints';
 import { formatDate } from '@/lib/format';
-import { SITE_CODES, siteName } from '@/lib/ml-sites';
+import { siteName } from '@/lib/ml-sites';
+import { type DetectStatus, detectProductUrl, ecommerceName } from '@/lib/product-url';
 
-const DEFAULT_COUNTRY = 'MLC';
-// Daily is the finest cadence the backend supports (the cron runs once a day).
-const CADENCE_OPTIONS = [24, 48, 72, 168] as const;
+// Cadence in days, from 1 day to 1 week. Daily is the finest the backend
+// supports (the cron runs once a day); we send `cadence_hours = days * 24`.
+const CADENCE_DAYS = [1, 2, 3, 4, 5, 6, 7] as const;
+const HOURS_PER_DAY = 24;
+
+// Non-ok detection statuses → the i18n key explaining what's wrong.
+const DETECT_MESSAGE_KEY: Record<Exclude<DetectStatus, 'ok' | 'empty'>, string> = {
+  invalid_url: 'detectInvalidUrl',
+  unknown_ecommerce: 'detectUnknownEcommerce',
+  unsupported_country: 'detectUnsupportedCountry',
+  not_a_product: 'detectNotAProduct',
+};
 
 export default function TrackedProductsPage() {
   const t = useTranslations('tracked');
@@ -36,8 +46,11 @@ export default function TrackedProductsPage() {
   const qc = useQueryClient();
 
   const [url, setUrl] = useState('');
-  const [country, setCountry] = useState(DEFAULT_COUNTRY);
-  const [cadence, setCadence] = useState(String(CADENCE_OPTIONS[0]));
+  const [cadenceDays, setCadenceDays] = useState(String(CADENCE_DAYS[0]));
+
+  // Derive the e-commerce, country and product-ness from the URL itself.
+  const detection = useMemo(() => detectProductUrl(url), [url]);
+  const canSubscribe = detection.status === 'ok';
 
   const trackedQuery = useQuery({
     queryKey: ['tracked-products'],
@@ -47,8 +60,12 @@ export default function TrackedProductsPage() {
   const invalidate = () => qc.invalidateQueries({ queryKey: ['tracked-products'] });
 
   const subscribeMut = useMutation({
-    mutationFn: () =>
-      api.subscribeTrackedProduct({ url: url.trim(), country, cadence_hours: Number(cadence) }),
+    mutationFn: (country: string) =>
+      api.subscribeTrackedProduct({
+        url: url.trim(),
+        country,
+        cadence_hours: Number(cadenceDays) * HOURS_PER_DAY,
+      }),
     onSuccess: () => {
       setUrl('');
       invalidate();
@@ -73,7 +90,7 @@ export default function TrackedProductsPage() {
           className="mt-4 flex flex-wrap items-end gap-3"
           onSubmit={(e) => {
             e.preventDefault();
-            if (url.trim()) subscribeMut.mutate();
+            if (detection.status === 'ok' && detection.site) subscribeMut.mutate(detection.site);
           }}
         >
           <div className="flex-1 min-w-[240px]">
@@ -89,31 +106,31 @@ export default function TrackedProductsPage() {
           </div>
           <div className="w-[160px]">
             <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-              {t('colCountry')}
-            </label>
-            <Select value={country} onValueChange={setCountry} enableClear={false}>
-              {SITE_CODES.map((c) => (
-                <SelectItem key={c} value={c}>
-                  {siteName(c)}
-                </SelectItem>
-              ))}
-            </Select>
-          </div>
-          <div className="w-[160px]">
-            <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
               {t('colCadence')}
             </label>
-            <Select value={cadence} onValueChange={setCadence} enableClear={false}>
-              {CADENCE_OPTIONS.map((h) => (
-                <SelectItem key={h} value={String(h)}>
-                  {t('cadenceHours', { hours: h })}
+            <Select value={cadenceDays} onValueChange={setCadenceDays} enableClear={false}>
+              {CADENCE_DAYS.map((d) => (
+                <SelectItem key={d} value={String(d)}>
+                  {t('cadenceDays', { days: d })}
                 </SelectItem>
               ))}
             </Select>
           </div>
-          <Button type="submit" loading={subscribeMut.isPending} disabled={!url.trim()}>
+          <Button type="submit" loading={subscribeMut.isPending} disabled={!canSubscribe}>
             {t('subscribe')}
           </Button>
+
+          {/* URL detection feedback: what we found, or why we can't track it. */}
+          {detection.status === 'ok' && detection.ecommerce && (
+            <p className="basis-full text-sm text-emerald-600 dark:text-emerald-400">
+              {ecommerceName(detection.ecommerce)} · {siteName(detection.site)}
+            </p>
+          )}
+          {detection.status !== 'ok' && detection.status !== 'empty' && (
+            <p className="basis-full text-sm text-amber-600 dark:text-amber-500">
+              {t(DETECT_MESSAGE_KEY[detection.status])}
+            </p>
+          )}
         </form>
         {subscribeMut.isError && (
           <p className="mt-2 text-sm text-red-600 dark:text-red-400">{t('subscribeError')}</p>
@@ -148,20 +165,24 @@ export default function TrackedProductsPage() {
                   <TableCell className="max-w-[280px]">
                     <Link
                       href={`/tracked/${tp.id}`}
-                      className="inline-flex items-center gap-1 font-medium text-blue-600 hover:underline dark:text-blue-400"
+                      title={tp.url}
+                      className="inline-flex max-w-full items-center gap-1 font-medium text-blue-600 hover:underline dark:text-blue-400"
                     >
                       <span className="truncate">
-                        {tp.catalog_id ?? tp.ml_public_id ?? tp.url}
+                        {tp.name ?? tp.catalog_id ?? tp.ml_public_id ?? tp.url}
                       </span>
                       <ArrowRight className="h-3.5 w-3.5 shrink-0" />
                     </Link>
                   </TableCell>
-                  <TableCell>{t('cadenceHours', { hours: tp.cadence_hours })}</TableCell>
+                  <TableCell>
+                    {t('cadenceDays', { days: Math.round(tp.cadence_hours / HOURS_PER_DAY) })}
+                  </TableCell>
                   <TableCell className="whitespace-nowrap text-gray-600 dark:text-gray-300">
                     {tp.last_run_at ? formatDate(tp.last_run_at, locale) : t('never')}
                   </TableCell>
                   <TableCell className="whitespace-nowrap text-gray-600 dark:text-gray-300">
-                    {formatDate(tp.next_run_at, locale)}
+                    {/* next_run_at is a day-marker at 00:00 UTC → read it in UTC. */}
+                    {formatDate(tp.next_run_at, locale, { utc: true })}
                   </TableCell>
                   <TableCell>
                     <Badge color={tp.active ? 'emerald' : 'gray'} size="xs">

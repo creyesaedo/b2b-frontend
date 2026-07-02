@@ -36,6 +36,7 @@ export function formatPercent(
 export function formatDate(
   value: string | null | undefined,
   locale = 'en-US',
+  options: { utc?: boolean } = {},
 ): string {
   if (!value) return '—';
   const d = new Date(value);
@@ -44,5 +45,8 @@ export function formatDate(
     year: 'numeric',
     month: 'short',
     day: 'numeric',
+    // Day-marker values (e.g. a scheduled next-run stored at 00:00 UTC) must be
+    // read in UTC, else a viewer behind UTC sees the previous calendar day.
+    ...(options.utc ? { timeZone: 'UTC' } : {}),
   });
 }
