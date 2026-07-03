@@ -1,19 +1,34 @@
 'use client';
 
+import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocale, useTranslations } from 'next-intl';
-import { BarList, Card, Metric, Text, Title } from '@tremor/react';
-import { CalendarRange, Layers, Package, Store } from 'lucide-react';
+import { Card } from '@tremor/react';
 import { DataState } from '@/components/app/data-state';
 import { PageHeader } from '@/components/app/page-header';
 import { MarketMap } from '@/components/dashboard/market-map';
-import { getStats } from '@/lib/api/endpoints';
-import { formatDate, formatNumber } from '@/lib/format';
-import { siteName } from '@/lib/ml-sites';
+import { MapLegend } from '@/components/dashboard/map-legend';
+import { MetricSwitcher } from '@/components/dashboard/metric-switcher';
+import { ChoroplethScope } from '@/components/dashboard/choropleth-scope';
+import { CountryPanel } from '@/components/dashboard/country-panel';
+import { CountryCompare } from '@/components/dashboard/country-compare';
+import { TimeScrubber } from '@/components/dashboard/time-scrubber';
+import { getCountryTimeseries, getStats } from '@/lib/api/endpoints';
+import { buildChoropleth, metricValue } from '@/lib/choropleth';
+import type { CountryMetric } from '@/lib/types';
+
+const MAX_COMPARE = 4;
 
 export default function DashboardPage() {
   const t = useTranslations('dashboard');
   const locale = useLocale();
+
+  const [metric, setMetric] = useState<CountryMetric>('count');
+  const [selected, setSelected] = useState<string | null>(null);
+  const [compareMode, setCompareMode] = useState(false);
+  const [compareCodes, setCompareCodes] = useState<string[]>([]);
+  // Scrubber position, counted from the latest date (0 = latest). null = follow latest.
+  const [dateIdx, setDateIdx] = useState<number | null>(null);
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['stats'],
@@ -22,78 +37,137 @@ export default function DashboardPage() {
 
   const isEmpty = !!data && data.total_products === 0;
 
-  const kpis = data
-    ? [
-        { icon: Package, label: t('kpiProducts'), value: formatNumber(data.total_products, locale) },
-        { icon: Store, label: t('kpiSellers'), value: formatNumber(data.total_sellers, locale) },
-        { icon: Layers, label: t('kpiCategories'), value: formatNumber(data.total_categories, locale) },
-        { icon: CalendarRange, label: t('kpiLastSnapshot'), value: formatDate(data.latest_snapshot, locale) },
-      ]
-    : [];
+  const metricsByCode = useMemo(
+    () => new Map((data?.by_country ?? []).map((c) => [c.country, c])),
+    [data],
+  );
 
-  const byCountry =
-    data?.by_country.map((c) => ({
-      name: siteName(c.country),
-      value: c.count,
-    })) ?? [];
+  // Snapshot dates ascending (stats returns them newest-first).
+  const dates = useMemo(() => [...(data?.snapshot_dates ?? [])].reverse(), [data]);
+  const activeIndex = dateIdx ?? dates.length - 1;
+  const onLatestDate = activeIndex >= dates.length - 1;
 
-  const dates = data?.snapshot_dates ?? [];
-  const coverage =
-    dates.length > 0
-      ? `${formatDate(dates[dates.length - 1], locale)} – ${formatDate(dates[0], locale)}`
-      : '—';
+  // Time series backs the scrubber; only fetched once the user leaves "latest".
+  const { data: series } = useQuery({
+    queryKey: ['timeseries', metric],
+    queryFn: () => getCountryTimeseries(metric),
+    enabled: dates.length > 1,
+  });
+
+  // Metric value per ML code for the active view: the live stats at the latest
+  // date, or the scrubbed snapshot's slice from the time series.
+  const valueByCode = useMemo(() => {
+    const map = new Map<string, number | null>();
+    if (onLatestDate || !series) {
+      for (const c of data?.by_country ?? []) map.set(c.country, metricValue(c, metric));
+      return map;
+    }
+    const targetDate = dates[activeIndex];
+    const di = series.dates.indexOf(targetDate);
+    for (const row of series.by_country) {
+      map.set(row.country, di >= 0 ? (row.values[di] ?? null) : null);
+    }
+    return map;
+  }, [data, series, metric, onLatestDate, activeIndex, dates]);
+
+  const choropleth = useMemo(
+    () => buildChoropleth([...valueByCode.values()]),
+    [valueByCode],
+  );
+
+  const handleSelect = (code: string) => {
+    if (compareMode) {
+      setCompareCodes((prev) =>
+        prev.includes(code)
+          ? prev.filter((c) => c !== code)
+          : prev.length >= MAX_COMPARE
+            ? prev
+            : [...prev, code],
+      );
+    } else {
+      setSelected((prev) => (prev === code ? null : code));
+    }
+  };
+
+  const toggleCompare = () => {
+    setCompareMode((on) => !on);
+    setSelected(null);
+    setCompareCodes([]);
+  };
+
+  const showPanel = !compareMode && selected;
+  const showCompare = compareMode;
 
   return (
     <>
       <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
       <DataState isLoading={isLoading} isError={isError} isEmpty={isEmpty} onRetry={() => refetch()}>
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {kpis.map((k) => (
-            <Card key={k.label} className="dark:!bg-gray-900">
-              <div className="flex items-center gap-2 text-gray-500">
-                <k.icon className="h-4 w-4" />
-                <Text>{k.label}</Text>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <MetricSwitcher metric={metric} onChange={setMetric} />
+          <button
+            type="button"
+            onClick={toggleCompare}
+            aria-pressed={compareMode}
+            className={[
+              'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
+              compareMode
+                ? 'bg-violet-600 text-white hover:bg-violet-700'
+                : 'border border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800',
+            ].join(' ')}
+          >
+            {compareMode ? t('compareOn') : t('compareOff')}
+          </button>
+        </div>
+
+        <ChoroplethScope>
+          <div className="grid gap-6 lg:grid-cols-3">
+            <Card className={`dark:!bg-gray-900 ${showPanel || showCompare ? 'lg:col-span-2' : 'lg:col-span-3'}`}>
+              <MarketMap
+                valueByCode={valueByCode}
+                choropleth={choropleth}
+                metric={metric}
+                selected={selected}
+                multiSelected={compareCodes}
+                onSelect={handleSelect}
+                locale={locale}
+              />
+
+              <div className="mt-4 space-y-4 border-t border-gray-100 pt-4 dark:border-gray-800">
+                <MapLegend choropleth={choropleth} metric={metric} locale={locale} />
+                {dates.length > 1 && (
+                  <TimeScrubber
+                    dates={dates}
+                    index={activeIndex}
+                    onChange={(i) => setDateIdx(i)}
+                  />
+                )}
               </div>
-              <Metric className="mt-2">{k.value}</Metric>
-            </Card>
-          ))}
-        </div>
-
-        <div className="mt-6 grid gap-6 lg:grid-cols-2">
-          <Card className="dark:!bg-gray-900">
-            <MarketMap data={data?.by_country ?? []} />
-          </Card>
-
-          <div className="space-y-6">
-            <Card className="dark:!bg-gray-900">
-              <Title>{t('byCountry')}</Title>
-              <BarList data={byCountry} className="mt-4" color="blue" />
             </Card>
 
-            <Card className="dark:!bg-gray-900">
-              <Title>{t('insightsTitle')}</Title>
-              <dl className="mt-4 space-y-4">
-                <Insight
-                  label={t('insightTopCountry')}
-                  value={byCountry.length ? byCountry[0].name : '—'}
-                />
-                <Insight label={t('insightSnapshots')} value={formatNumber(dates.length, locale)} />
-                <Insight label={t('insightCoverage')} value={coverage} />
-              </dl>
-            </Card>
+            {(showPanel || showCompare) && (
+              <Card className="dark:!bg-gray-900 lg:col-span-1">
+                {showPanel && selected && (
+                  <CountryPanel
+                    code={selected}
+                    metrics={metricsByCode.get(selected)}
+                    onClose={() => setSelected(null)}
+                  />
+                )}
+                {showCompare && (
+                  <CountryCompare
+                    codes={compareCodes}
+                    metricsByCode={metricsByCode}
+                    onRemove={(code) =>
+                      setCompareCodes((prev) => prev.filter((c) => c !== code))
+                    }
+                  />
+                )}
+              </Card>
+            )}
           </div>
-        </div>
+        </ChoroplethScope>
       </DataState>
     </>
-  );
-}
-
-function Insight({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between border-b border-gray-100 pb-3 last:border-0 dark:border-gray-800">
-      <dt className="text-sm text-gray-500 dark:text-gray-400">{label}</dt>
-      <dd className="text-sm font-semibold text-gray-900 dark:text-gray-100">{value}</dd>
-    </div>
   );
 }

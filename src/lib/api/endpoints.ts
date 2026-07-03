@@ -1,10 +1,13 @@
 import { apiFetch, BFF_URL, qs } from './client';
 import type {
+  CategoryPriceGap,
   AuthUser,
   Category,
   CatalogProduct,
   CategoryCandidate,
   CategoryFacet,
+  CountryMetric,
+  CountryTimeseries,
   GlobalCategory,
   GlobalSubcategory,
   HistoryPoint,
@@ -77,6 +80,16 @@ export const googleLoginUrl = () => `${BFF_URL}/auth/google`;
 // --- Data -------------------------------------------------------------------
 
 export const getStats = () => apiFetch<Stats>(`/v1/${PROVIDER}/stats`);
+
+/** Per-country time series of one map metric across snapshot dates (map scrubber). */
+export const getCountryTimeseries = (metric: CountryMetric) =>
+  apiFetch<CountryTimeseries>(`/v1/${PROVIDER}/stats/timeseries${qs({ metric })}`);
+
+/** Cross-border category price comparison across the given ML site codes. */
+export const getArbitrage = (countries: string[], limit?: number) =>
+  apiFetch<CategoryPriceGap[]>(
+    `/v1/${PROVIDER}/stats/arbitrage${qs({ countries: countries.join(','), limit })}`,
+  );
 
 export const getProducts = async (params: ProductListParams = {}) => {
   const { include_overrides, ...rest } = params;

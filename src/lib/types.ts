@@ -244,13 +244,55 @@ export interface SubcategoryCandidate {
   global_subcategory_name: string | null;
 }
 
+/**
+ * Per-country market metrics for the dashboard map. Each product contributes its
+ * most recent observation, so `count` is distinct products currently listed (not
+ * all-time snapshot rows). Shares are 0–1; `avg_discount_pct` is 0–100.
+ */
+export interface CountryMetrics {
+  country: string;
+  count: number;
+  seller_count: number;
+  category_count: number;
+  median_usd_price: number | null;
+  avg_discount_pct: number | null;
+  official_store_share: number | null;
+  cbt_share: number | null;
+  latest_snapshot: string | null;
+}
+
 export interface Stats {
   total_products: number;
   total_categories: number;
   total_sellers: number;
   latest_snapshot: string | null;
-  by_country: Array<{ country: string; count: number }>;
+  by_country: CountryMetrics[];
   snapshot_dates: string[];
+}
+
+/** Which per-country metric the map choropleth / scrubber colors by. */
+export type CountryMetric = 'count' | 'median_price' | 'discount' | 'official_share';
+
+/** Per-country time series of one metric, aligned to a shared ascending date axis. */
+export interface CountryTimeseries {
+  dates: string[];
+  by_country: Array<{ country: string; values: Array<number | null> }>;
+}
+
+/**
+ * Cross-border price comparison for one canonical category across markets.
+ * (Catalog IDs are per-site on MercadoLibre, so the shared identity that can be
+ * compared across countries is the canonical category, not the product.)
+ */
+export interface CategoryPriceGap {
+  category_id: number;
+  name: string;
+  country_count: number;
+  min_usd: number;
+  max_usd: number;
+  cheapest_country: string;
+  priciest_country: string;
+  gap_pct: number;
 }
 
 export interface ProductListParams {
