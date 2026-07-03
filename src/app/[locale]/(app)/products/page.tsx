@@ -12,7 +12,6 @@ import {
   SearchSelectItem,
   Select,
   SelectItem,
-  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -95,10 +94,29 @@ export default function ProductsPage() {
     return Flag;
   }, [country]);
 
-  // Pins the header row while the table body scrolls. The background must match
-  // the Card so scrolled rows hide behind the header instead of bleeding through.
+  // The header lives in its own (non-scrolling) table so the body's scrollbar
+  // starts at the header divider instead of running the full height. This
+  // border-b draws that divider line.
   const headerClass =
-    'sticky top-0 z-10 border-b border-tremor-border bg-white dark:border-dark-tremor-border dark:bg-gray-900';
+    'border-b border-tremor-border bg-white dark:border-dark-tremor-border dark:bg-gray-900';
+
+  // Shared column widths for the header and body tables. Both use `table-fixed`
+  // + this same colgroup so their columns line up exactly; the product-name
+  // column is left unsized so it absorbs the remaining width.
+  const colGroup = (
+    <colgroup>
+      <col />
+      {country === ALL && <col className="w-[4.5rem]" />}
+      <col className="w-28" />
+      <col className="w-16" />
+      <col className="w-24" />
+      <col className="w-24" />
+      <col className="w-24" />
+      <col className="w-44" />
+      <col className="w-24" />
+      <col className="w-32" />
+    </colgroup>
+  );
 
   return (
     <div className="flex h-full flex-col">
@@ -185,41 +203,53 @@ export default function ProductsPage() {
         </div>
       </Card>
 
-      <Card className="flex min-h-0 flex-1 flex-col !py-3 dark:!bg-gray-900">
+      <Card className="flex min-h-0 flex-1 flex-col !py-3 !pr-0 dark:!bg-gray-900">
         <DataState
           isLoading={isLoading}
           isError={isError}
           isEmpty={isEmpty}
           onRetry={() => refetch()}
         >
-          <Table className="min-h-0 flex-1">
-            <TableHead>
-              <TableRow>
-                <TableHeaderCell className={`${headerClass} w-full min-w-[22rem]`}>
-                  {t('colName')}
-                </TableHeaderCell>
-                {country === ALL && (
-                  <TableHeaderCell className={headerClass}>{common('country')}</TableHeaderCell>
-                )}
-                <TableHeaderCell className={`${headerClass} text-right`}>{t('colPrice')}</TableHeaderCell>
-                <TableHeaderCell className={`${headerClass} text-right`}>{t('colDiscount')}</TableHeaderCell>
-                <TableHeaderCell className={`${headerClass} text-right`}>{t('colSold')}</TableHeaderCell>
-                <TableHeaderCell className={`${headerClass} text-right`}>{t('colRating')}</TableHeaderCell>
-                <TableHeaderCell className={`${headerClass} text-right`}>{t('colRanking')}</TableHeaderCell>
-                <TableHeaderCell className={headerClass}>{t('colSeller')}</TableHeaderCell>
-                <TableHeaderCell className={`${headerClass} text-right`}>{t('colHistory')}</TableHeaderCell>
-                <TableHeaderCell className={`${headerClass} text-right`}>{t('colLastSnapshot')}</TableHeaderCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((p) => (
-                <ProductRow key={p.id} product={p} currency={currency} locale={locale} officialLabel={t('official')} showCountry={country === ALL} />
-              ))}
-            </TableBody>
-          </Table>
+          <div className="flex min-h-0 flex-1 flex-col">
+            {/* Static header. Reserves a scrollbar-width gutter (its own
+                scrollbar is transparent) so its columns align with the body,
+                whose scrollbar starts right at this header's divider line. */}
+            <div className="shrink-0 overflow-y-scroll [&::-webkit-scrollbar-thumb]:bg-transparent [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar]:w-2.5">
+              <table className="w-full table-fixed text-tremor-default text-tremor-content dark:text-dark-tremor-content [&_th]:px-2">
+                {colGroup}
+                <TableHead>
+                  <TableRow>
+                    <TableHeaderCell className={headerClass}>{t('colName')}</TableHeaderCell>
+                    {country === ALL && (
+                      <TableHeaderCell className={headerClass}>{common('country')}</TableHeaderCell>
+                    )}
+                    <TableHeaderCell className={`${headerClass} text-right`}>{t('colPrice')}</TableHeaderCell>
+                    <TableHeaderCell className={`${headerClass} text-right`}>{t('colDiscount')}</TableHeaderCell>
+                    <TableHeaderCell className={`${headerClass} text-right`}>{t('colSold')}</TableHeaderCell>
+                    <TableHeaderCell className={`${headerClass} text-right`}>{t('colRating')}</TableHeaderCell>
+                    <TableHeaderCell className={`${headerClass} text-right`}>{t('colRanking')}</TableHeaderCell>
+                    <TableHeaderCell className={headerClass}>{t('colSeller')}</TableHeaderCell>
+                    <TableHeaderCell className={`${headerClass} text-right`}>{t('colHistory')}</TableHeaderCell>
+                    <TableHeaderCell className={`${headerClass} text-right !pr-5`}>{t('colLastSnapshot')}</TableHeaderCell>
+                  </TableRow>
+                </TableHead>
+              </table>
+            </div>
+            {/* Scrolling body; its scrollbar begins at the header divider. */}
+            <div className="min-h-0 flex-1 overflow-y-scroll [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar]:w-2.5 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600">
+              <table className="w-full table-fixed text-tremor-default text-tremor-content dark:text-dark-tremor-content [&_td]:px-2">
+                {colGroup}
+                <TableBody>
+                  {rows.map((p) => (
+                    <ProductRow key={p.id} product={p} currency={currency} locale={locale} officialLabel={t('official')} showCountry={country === ALL} />
+                  ))}
+                </TableBody>
+              </table>
+            </div>
+          </div>
 
           {meta && (
-            <div className="mt-4 flex shrink-0 items-center justify-between">
+            <div className="mt-4 flex shrink-0 items-center justify-between pr-6">
               <span className="text-sm text-gray-500">
                 {common('page')} {meta.page} {common('of')} {meta.total_pages || 1}
               </span>
@@ -288,7 +318,7 @@ function ProductRow({
 
   return (
     <TableRow className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-      <TableCell className="w-full min-w-[22rem] max-w-xl whitespace-normal break-words align-top">
+      <TableCell className="w-full min-w-[12rem] max-w-md whitespace-normal break-words align-top">
         {href ? (
           <Link href={href} className="font-medium text-blue-600 hover:underline">
             {p.name}
@@ -340,7 +370,7 @@ function ProductRow({
       <TableCell className="text-right tabular-nums">
         {formatNumber(p.snapshot_count, locale)}
       </TableCell>
-      <TableCell className="text-right tabular-nums whitespace-nowrap">
+      <TableCell className="text-right tabular-nums whitespace-nowrap !pr-5">
         {formatDate(p.last_snapshot_date, locale)}
       </TableCell>
     </TableRow>
