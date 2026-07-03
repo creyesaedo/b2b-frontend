@@ -15,7 +15,7 @@ import {
   Text,
   Title,
 } from '@tremor/react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ExternalLink } from 'lucide-react';
 import { DataState } from '@/components/app/data-state';
 import { HistoryChart, Kpi } from '@/components/app/history-chart';
 import { getProductHistory, getTrackedProducts } from '@/lib/api/endpoints';
@@ -92,6 +92,11 @@ export default function TrackedDetailPage() {
 
   const isEmpty = !historyQuery.isLoading && history.length === 0;
 
+  // The subscription list is owner-scoped, so an id that isn't in it is not the
+  // current user's (or doesn't exist). Show an explicit not-found state instead of
+  // the generic empty chart state.
+  const notFound = !trackedQuery.isLoading && !trackedQuery.isError && !subscription;
+
   return (
     <>
       <Link
@@ -108,9 +113,26 @@ export default function TrackedDetailPage() {
       {subscription && (
         <p className="mb-5 text-sm text-gray-500 dark:text-gray-400">
           {siteName(subscription.country)} · {t('cadenceDays', { days: Math.round(subscription.cadence_hours / 24) })}
+          {' · '}
+          <a
+            href={subscription.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={subscription.url}
+            className="inline-flex items-center gap-1 text-blue-600 hover:underline dark:text-blue-400"
+          >
+            {t('openProduct')}
+            <ExternalLink className="h-3.5 w-3.5" />
+          </a>
         </p>
       )}
 
+      {notFound ? (
+        <Card className="dark:!bg-gray-900">
+          <Title>{t('notFound')}</Title>
+          <Text className="mt-1">{t('notFoundBody')}</Text>
+        </Card>
+      ) : (
       <DataState
         isLoading={trackedQuery.isLoading || historyQuery.isLoading}
         isError={trackedQuery.isError || historyQuery.isError}
@@ -220,6 +242,7 @@ export default function TrackedDetailPage() {
           </div>
         </Card>
       </DataState>
+      )}
     </>
   );
 }

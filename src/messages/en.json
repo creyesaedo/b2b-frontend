@@ -318,7 +318,10 @@
     "snapshots": "Daily snapshots",
     "snapshotsNote": "One row per checked day; unchanged days carry forward the last snapshot's values.",
     "colRanking": "Ranking",
-    "colSold": "Sold"
+    "colSold": "Sold",
+    "openProduct": "View on site",
+    "notFound": "Product not found",
+    "notFoundBody": "This tracked product doesn't exist or isn't yours."
   },
   "categories": {
     "title": "Category analysis",

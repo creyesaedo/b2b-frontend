@@ -318,7 +318,10 @@
     "snapshots": "Snapshots diarios",
     "snapshotsNote": "Una fila por día comprobado; los días sin cambios arrastran los valores del último snapshot.",
     "colRanking": "Ranking",
-    "colSold": "Vendidos"
+    "colSold": "Vendidos",
+    "openProduct": "Ver en el sitio",
+    "notFound": "Producto no encontrado",
+    "notFoundBody": "Este producto seguido no existe o no es tuyo."
   },
   "categories": {
     "title": "Análisis por categoría",
