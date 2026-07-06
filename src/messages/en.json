@@ -19,7 +19,8 @@
     "page": "Page",
     "of": "of",
     "viewDetails": "View details",
-    "logout": "Log out"
+    "logout": "Log out",
+    "toggleTheme": "Toggle theme"
   },
   "nav": {
     "features": "Features",

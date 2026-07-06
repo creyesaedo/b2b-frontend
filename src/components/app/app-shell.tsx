@@ -14,6 +14,7 @@ import {
 import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { Brand } from '@/components/brand';
 import { LocaleSwitcher } from '@/components/locale-switcher';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuth } from '@/lib/auth/auth-context';
 
 const NAV = [
@@ -84,6 +85,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="hidden md:block" />
           <div className="flex items-center gap-3">
             <LocaleSwitcher />
+            <ThemeToggle />
             <span className="hidden text-sm text-gray-600 sm:block dark:text-gray-300">
               {user?.name ?? user?.email}
             </span>

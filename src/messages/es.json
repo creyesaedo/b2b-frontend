@@ -19,7 +19,8 @@
     "page": "Página",
     "of": "de",
     "viewDetails": "Ver detalle",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "toggleTheme": "Cambiar tema"
   },
   "nav": {
     "features": "Características",

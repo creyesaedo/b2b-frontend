@@ -11,6 +11,7 @@ import { useAuth } from '@/lib/auth/auth-context';
 import { Link, useRouter } from '@/i18n/navigation';
 import { Brand } from '@/components/brand';
 import { LocaleSwitcher } from '@/components/locale-switcher';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 const schema = z.object({
   name: z.string().optional(),
@@ -56,7 +57,10 @@ export function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
         <Link href="/">
           <Brand />
         </Link>
-        <LocaleSwitcher />
+        <div className="flex items-center gap-3">
+          <LocaleSwitcher />
+          <ThemeToggle />
+        </div>
       </div>
 
       <div className="flex flex-1 items-center justify-center px-4 pb-16">

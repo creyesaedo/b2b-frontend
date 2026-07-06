@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Brand } from '@/components/brand';
 import { LocaleSwitcher } from '@/components/locale-switcher';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export function SiteHeader() {
   const t = useTranslations('nav');
@@ -26,6 +27,7 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-3">
           <LocaleSwitcher />
+          <ThemeToggle />
           <Link
             href="/login"
             className="hidden text-sm font-medium text-gray-700 hover:text-gray-900 sm:block dark:text-gray-200 dark:hover:text-white"
