@@ -53,7 +53,7 @@ export function CountryCompare({ codes, metricsByCode, onRemove }: CountryCompar
               </th>
               {codes.map((code) => (
                 <th key={code} className="pb-2 pl-3 text-right">
-                  <span className="inline-flex items-center gap-1.5">
+                  <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
                     {siteCountryCode(code) && (
                       <span className={`fi fi-${siteCountryCode(code)} !h-3.5 !w-5`} />
                     )}

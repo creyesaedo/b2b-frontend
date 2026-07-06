@@ -18,9 +18,15 @@ const STYLE = `
 `;
 
 /** Wraps children in the choropleth CSS-variable scope. */
-export function ChoroplethScope({ children }: { children: ReactNode }) {
+export function ChoroplethScope({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <div className="choro-scope">
+    <div className={`choro-scope${className ? ` ${className}` : ''}`}>
       <style>{STYLE}</style>
       {children}
     </div>

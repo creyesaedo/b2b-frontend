@@ -1,23 +1,27 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type CSSProperties } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocale, useTranslations } from 'next-intl';
-import { Card } from '@tremor/react';
-import { DataState } from '@/components/app/data-state';
-import { PageHeader } from '@/components/app/page-header';
-import { MarketMap } from '@/components/dashboard/market-map';
+import { MarketMap, type HoverInfo } from '@/components/dashboard/market-map';
 import { MapLegend } from '@/components/dashboard/map-legend';
 import { MetricSwitcher } from '@/components/dashboard/metric-switcher';
 import { ChoroplethScope } from '@/components/dashboard/choropleth-scope';
 import { CountryPanel } from '@/components/dashboard/country-panel';
 import { CountryCompare } from '@/components/dashboard/country-compare';
 import { TimeScrubber } from '@/components/dashboard/time-scrubber';
+import { DataState } from '@/components/app/data-state';
 import { getCountryTimeseries, getStats } from '@/lib/api/endpoints';
-import { buildChoropleth, metricValue } from '@/lib/choropleth';
+import { buildChoropleth, formatMetric, metricValue } from '@/lib/choropleth';
+import { siteName } from '@/lib/ml-sites';
 import type { CountryMetric } from '@/lib/types';
 
 const MAX_COMPARE = 4;
+
+// Frosted floating surface shared by every overlay that sits on the map.
+const GLASS =
+  'rounded-2xl border border-white/60 bg-white/75 shadow-xl shadow-slate-900/[0.07] backdrop-blur-xl ' +
+  'dark:border-white/10 dark:bg-slate-900/75 dark:shadow-black/30';
 
 export default function DashboardPage() {
   const t = useTranslations('dashboard');
@@ -27,6 +31,7 @@ export default function DashboardPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [compareMode, setCompareMode] = useState(false);
   const [compareCodes, setCompareCodes] = useState<string[]>([]);
+  const [hovered, setHovered] = useState<HoverInfo | null>(null);
   // Scrubber position, counted from the latest date (0 = latest). null = follow latest.
   const [dateIdx, setDateIdx] = useState<number | null>(null);
 
@@ -95,79 +100,131 @@ export default function DashboardPage() {
     setCompareCodes([]);
   };
 
-  const showPanel = !compareMode && selected;
+  const showPanel = !compareMode && !!selected;
   const showCompare = compareMode;
+  const panelOpen = showPanel || showCompare;
+
+  // Side-panel width: 25rem fits two compared countries; each extra column adds
+  // ~7rem so the metrics table never needs horizontal scroll. The CSS min()
+  // caps it at the map surface. Shared via --panel-w with the bottom bar.
+  const panelRem = 25 + (showCompare ? Math.max(0, compareCodes.length - 2) * 7 : 0);
+  const panelStyle = { '--panel-w': `min(${panelRem}rem, 100% - 2rem)` } as CSSProperties;
 
   return (
-    <>
-      <PageHeader title={t('title')} subtitle={t('subtitle')} />
+    // Negative margins cancel the AppShell <main> padding so the map surface
+    // bleeds edge-to-edge; the +2rem/+3rem height puts back what the padding took.
+    <ChoroplethScope className="-m-4 h-[calc(100%+2rem)] sm:-m-6 sm:h-[calc(100%+3rem)]">
+      <div
+        className="relative flex h-full w-full items-center justify-center overflow-hidden bg-gradient-to-b from-sky-50 via-blue-50/50 to-indigo-100/60 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900"
+        style={panelStyle}
+      >
+        {/* Soft radial glow behind the continent — pure decoration. */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_45%,rgba(59,130,246,0.10),transparent_70%)] dark:bg-[radial-gradient(60%_50%_at_50%_45%,rgba(59,130,246,0.14),transparent_70%)]" />
+        <DataState
+          isLoading={isLoading}
+          isError={isError}
+          isEmpty={isEmpty}
+          onRetry={() => refetch()}
+        >
+          {/* Full-bleed map fills the whole surface; everything else floats over it. */}
+          <div className="absolute inset-0">
+            <MarketMap
+              valueByCode={valueByCode}
+              choropleth={choropleth}
+              selected={selected}
+              multiSelected={compareCodes}
+              onSelect={handleSelect}
+              onHover={setHovered}
+            />
+          </div>
 
-      <DataState isLoading={isLoading} isError={isError} isEmpty={isEmpty} onRetry={() => refetch()}>
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <MetricSwitcher metric={metric} onChange={setMetric} />
-          <button
-            type="button"
-            onClick={toggleCompare}
-            aria-pressed={compareMode}
-            className={[
-              'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
-              compareMode
-                ? 'bg-violet-600 text-white hover:bg-violet-700'
-                : 'border border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800',
-            ].join(' ')}
+          {/* Top-left control cluster: title, metric, compare, live readout. */}
+          <div className={`absolute left-4 top-4 z-20 w-[min(21rem,calc(100%-2rem))] select-none space-y-3 p-4 ${GLASS}`}>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                {t('title')}
+              </h1>
+              <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">
+                {t('subtitle')}
+              </p>
+            </div>
+
+            <MetricSwitcher metric={metric} onChange={setMetric} />
+
+            <div className="flex items-center justify-between gap-2">
+              <p className="min-w-0 flex-1 truncate text-sm">
+                {hovered ? (
+                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                    {siteName(hovered.code)}{' '}
+                    <span className="tabular-nums text-blue-600 dark:text-blue-400">
+                      {formatMetric(metric, hovered.value, locale)}
+                    </span>
+                  </span>
+                ) : (
+                  <span className="text-gray-400">{t('mapHint')}</span>
+                )}
+              </p>
+              <button
+                type="button"
+                onClick={toggleCompare}
+                aria-pressed={compareMode}
+                className={[
+                  'shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
+                  compareMode
+                    ? 'bg-fuchsia-600 text-white hover:bg-fuchsia-700'
+                    : 'border border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800',
+                ].join(' ')}
+              >
+                {compareMode ? t('compareOn') : t('compareOff')}
+              </button>
+            </div>
+          </div>
+
+          {/* Bottom bar: legend + time scrubber. Clears the side panel when open. */}
+          <div
+            className={`absolute bottom-4 left-4 z-20 flex select-none flex-wrap items-end justify-between gap-3 transition-[right] duration-300 ${
+              panelOpen ? 'right-4 sm:right-[calc(var(--panel-w)+2rem)]' : 'right-4'
+            }`}
           >
-            {compareMode ? t('compareOn') : t('compareOff')}
-          </button>
-        </div>
-
-        <ChoroplethScope>
-          <div className="grid gap-6 lg:grid-cols-3">
-            <Card className={`dark:!bg-gray-900 ${showPanel || showCompare ? 'lg:col-span-2' : 'lg:col-span-3'}`}>
-              <MarketMap
-                valueByCode={valueByCode}
-                choropleth={choropleth}
-                metric={metric}
-                selected={selected}
-                multiSelected={compareCodes}
-                onSelect={handleSelect}
-                locale={locale}
-              />
-
-              <div className="mt-4 space-y-4 border-t border-gray-100 pt-4 dark:border-gray-800">
-                <MapLegend choropleth={choropleth} metric={metric} locale={locale} />
-                {dates.length > 1 && (
-                  <TimeScrubber
-                    dates={dates}
-                    index={activeIndex}
-                    onChange={(i) => setDateIdx(i)}
-                  />
-                )}
+            <div className={`max-w-full p-3 ${GLASS}`}>
+              <MapLegend choropleth={choropleth} metric={metric} locale={locale} />
+            </div>
+            {dates.length > 1 && (
+              <div className={`w-full max-w-xs p-3 sm:w-72 ${GLASS}`}>
+                <TimeScrubber
+                  dates={dates}
+                  index={activeIndex}
+                  onChange={(i) => setDateIdx(i)}
+                />
               </div>
-            </Card>
-
-            {(showPanel || showCompare) && (
-              <Card className="dark:!bg-gray-900 lg:col-span-1">
-                {showPanel && selected && (
-                  <CountryPanel
-                    code={selected}
-                    metrics={metricsByCode.get(selected)}
-                    onClose={() => setSelected(null)}
-                  />
-                )}
-                {showCompare && (
-                  <CountryCompare
-                    codes={compareCodes}
-                    metricsByCode={metricsByCode}
-                    onRemove={(code) =>
-                      setCompareCodes((prev) => prev.filter((c) => c !== code))
-                    }
-                  />
-                )}
-              </Card>
             )}
           </div>
-        </ChoroplethScope>
-      </DataState>
-    </>
+
+          {/* Right-hand detail / compare panel slides over the map. */}
+          {panelOpen && (
+            <div
+              className={`absolute bottom-4 right-4 top-4 z-30 w-[calc(100%-2rem)] overflow-y-auto p-5 transition-[width] duration-300 sm:w-[var(--panel-w)] ${GLASS}`}
+            >
+              {showPanel && selected && (
+                <CountryPanel
+                  code={selected}
+                  metrics={metricsByCode.get(selected)}
+                  onClose={() => setSelected(null)}
+                />
+              )}
+              {showCompare && (
+                <CountryCompare
+                  codes={compareCodes}
+                  metricsByCode={metricsByCode}
+                  onRemove={(code) =>
+                    setCompareCodes((prev) => prev.filter((c) => c !== code))
+                  }
+                />
+              )}
+            </div>
+          )}
+        </DataState>
+      </div>
+    </ChoroplethScope>
   );
 }

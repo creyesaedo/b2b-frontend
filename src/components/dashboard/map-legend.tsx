@@ -10,7 +10,10 @@ interface MapLegendProps {
   locale?: string;
 }
 
-/** Sequential-scale legend: one swatch per bucket with its value range. */
+/**
+ * Sequential-scale legend rendered as a continuous ramp bar: min/max at the
+ * ends, one segment per bucket (hover a segment for its exact range).
+ */
 export function MapLegend({ choropleth, metric, locale }: MapLegendProps) {
   const t = useTranslations('dashboard');
 
@@ -22,32 +25,34 @@ export function MapLegend({ choropleth, metric, locale }: MapLegendProps) {
   const edges = [choropleth.min, ...choropleth.thresholds, choropleth.max];
 
   return (
-    <div>
-      <p className="mb-1.5 text-xs font-medium text-gray-500 dark:text-gray-400">
-        {t('legendTitle')}
-      </p>
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
-        {Array.from({ length: choropleth.steps }).map((_, i) => (
-          <div key={i} className="flex items-center gap-1.5">
-            <span
-              className="inline-block h-3 w-3 rounded-sm ring-1 ring-black/5 dark:ring-white/10"
-              style={{ backgroundColor: `var(--choro-${i})` }}
-            />
-            <span className="text-xs tabular-nums text-gray-600 dark:text-gray-300">
-              {formatMetric(metric, edges[i], locale)}
-              {edges[i + 1] !== undefined && edges[i + 1] !== edges[i]
-                ? `–${formatMetric(metric, edges[i + 1], locale)}`
-                : ''}
-            </span>
-          </div>
-        ))}
-        <div className="flex items-center gap-1.5">
+    <div className="w-60 max-w-full">
+      <div className="mb-1.5 flex items-center justify-between gap-3">
+        <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+          {t('legendTitle')}
+        </p>
+        <span className="flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-400">
           <span
-            className="inline-block h-3 w-3 rounded-sm ring-1 ring-black/5 dark:ring-white/10"
+            className="inline-block h-2.5 w-2.5 rounded-[3px] ring-1 ring-black/5 dark:ring-white/10"
             style={{ backgroundColor: 'var(--choro-nodata)' }}
           />
-          <span className="text-xs text-gray-500 dark:text-gray-400">{t('legendNoData')}</span>
-        </div>
+          {t('legendNoData')}
+        </span>
+      </div>
+
+      <div className="flex h-2 overflow-hidden rounded-full ring-1 ring-black/5 dark:ring-white/10">
+        {Array.from({ length: choropleth.steps }).map((_, i) => (
+          <span
+            key={i}
+            className="flex-1"
+            style={{ backgroundColor: `var(--choro-${i})` }}
+            title={`${formatMetric(metric, edges[i], locale)} – ${formatMetric(metric, edges[i + 1], locale)}`}
+          />
+        ))}
+      </div>
+
+      <div className="mt-1 flex items-center justify-between text-[11px] tabular-nums text-gray-600 dark:text-gray-300">
+        <span>{formatMetric(metric, choropleth.min, locale)}</span>
+        <span>{formatMetric(metric, choropleth.max, locale)}</span>
       </div>
     </div>
   );
