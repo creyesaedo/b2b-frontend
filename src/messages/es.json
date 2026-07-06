@@ -150,7 +150,26 @@
       "title": "Analiza el mercado de MercadoLibre como un profesional",
       "subtitle": "Tendencias de precios, ranking de los más vendidos, descuentos y vendedores — en un dashboard claro y accionable. Toma decisiones con datos, no con corazonadas.",
       "ctaPrimary": "Empezar gratis",
-      "ctaSecondary": "Ver características"
+      "ctaSecondary": "Ver características",
+      "imageAlt": "Equipo ejecutivo revisando métricas de mercado en una sala de reuniones",
+      "trust1": "Actualización semanal",
+      "trust2": "Precios normalizados en USD",
+      "trust3": "Principales mercados de LATAM"
+    },
+    "heroCards": {
+      "priceLabel": "Tendencia de precio",
+      "priceDelta": "-12% este trimestre",
+      "rankLabel": "Más vendidos",
+      "rankValue": "#3",
+      "rankDelta": "↑2 posiciones"
+    },
+    "decisions": {
+      "title": "Decisiones respaldadas por datos, no por intuición",
+      "text": "Deja de perseguir planillas y capturas de pantalla. MercadoMetrics convierte los movimientos del mercado en señales claras para que tu equipo decida con confianza.",
+      "bullet1": "Detecta subidas y bajadas de precio antes que tu competencia.",
+      "bullet2": "Identifica qué productos entran y salen del ranking de más vendidos.",
+      "bullet3": "Compara categorías y vendedores entre países en una sola vista.",
+      "imageAlt": "Equipo de trabajo priorizando decisiones frente a un tablero"
     },
     "stats": {
       "title": "Datos que importan",
@@ -182,7 +201,8 @@
     "cta": {
       "title": "Empieza a analizar el mercado hoy",
       "subtitle": "Crea tu cuenta gratis en segundos.",
-      "button": "Crear cuenta"
+      "button": "Crear cuenta",
+      "imageAlt": "Dashboard de analítica con métricas y gráficos"
     },
     "footer": {
       "tagline": "Inteligencia de mercado para MercadoLibre.",
@@ -269,7 +289,7 @@
     "lowestPrice": "Precio mínimo",
     "highestPrice": "Precio máximo",
     "bestRanking": "Mejor ranking",
-    "historyCount": "Cantidad de históricos",
+    "historyCount": "Snapshots",
     "rankingNote": "1 = mejor posición en los más vendidos",
     "noHistory": "No hay historial para este producto.",
     "totalVisits": "Visitas acumuladas",
@@ -301,7 +321,21 @@
     "colSeller": "Vendedor",
     "colDiscount": "Descuento",
     "colVisits": "Visitas",
-    "noDiscount": "Sin descuento"
+    "noDiscount": "Sin descuento",
+    "vsPrev": "vs. anterior",
+    "buyboxShare": "Participación en el Buy Box",
+    "buyboxShareNote": "Snapshots ganados por cada vendedor.",
+    "visitsShare": "Visitas por vendedor",
+    "visitsShareNote": "Distribución de las visitas atribuidas a cada ganador.",
+    "others": "Otros",
+    "details": "Detalles del producto",
+    "detailCurrency": "Moneda local",
+    "detailLastSnapshot": "Último snapshot",
+    "detailSeller": "Vendedor actual",
+    "detailOfficial": "Tienda oficial",
+    "detailDiscount": "Descuento actual",
+    "yes": "Sí",
+    "no": "No"
   },
   "tracked": {
     "title": "Productos seguidos",

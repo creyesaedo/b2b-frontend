@@ -355,7 +355,8 @@ function ProductRow({
         )}
       </TableCell>
       <TableCell className="text-right tabular-nums">
-        {p.ranking_position !== null ? `#${p.ranking_position}` : '—'}
+        {/* 0 is the "not in a best-sellers list" sentinel, never a real rank. */}
+        {p.ranking_position ? `#${p.ranking_position}` : '—'}
       </TableCell>
       <TableCell>
         <span className="text-sm text-gray-700 dark:text-gray-300">

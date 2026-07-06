@@ -1,0 +1,9 @@
+node_modules
+.next
+graphify-out
+.env*
+!.env.example
+Dockerfile
+.dockerignore
+.git
+tsconfig.tsbuildinfo

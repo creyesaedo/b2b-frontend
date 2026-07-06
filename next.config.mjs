@@ -4,6 +4,9 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Self-contained server bundle for the Docker image (copies only what
+  // dist needs into .next/standalone instead of shipping node_modules).
+  output: 'standalone',
   // Google avatar + MercadoLibre image hosts.
   images: {
     remotePatterns: [

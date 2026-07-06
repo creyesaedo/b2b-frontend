@@ -150,7 +150,26 @@
       "title": "Analyze the MercadoLibre market like a pro",
       "subtitle": "Price trends, best-seller rankings, discounts and sellers — in a clear, actionable dashboard. Make decisions with data, not hunches.",
       "ctaPrimary": "Get started free",
-      "ctaSecondary": "See features"
+      "ctaSecondary": "See features",
+      "imageAlt": "Executive team reviewing market metrics in a boardroom",
+      "trust1": "Weekly updates",
+      "trust2": "USD-normalized prices",
+      "trust3": "Top LATAM markets"
+    },
+    "heroCards": {
+      "priceLabel": "Price trend",
+      "priceDelta": "-12% this quarter",
+      "rankLabel": "Best-sellers",
+      "rankValue": "#3",
+      "rankDelta": "↑2 spots"
+    },
+    "decisions": {
+      "title": "Decisions backed by data, not gut feeling",
+      "text": "Stop chasing spreadsheets and screenshots. MercadoMetrics turns market movements into clear signals so your team can decide with confidence.",
+      "bullet1": "Spot price increases and drops before your competition.",
+      "bullet2": "See which products enter and exit the best-seller rankings.",
+      "bullet3": "Compare categories and sellers across countries in a single view.",
+      "imageAlt": "Team prioritizing decisions in front of a planning board"
     },
     "stats": {
       "title": "Data that matters",
@@ -182,7 +201,8 @@
     "cta": {
       "title": "Start analyzing the market today",
       "subtitle": "Create your free account in seconds.",
-      "button": "Create account"
+      "button": "Create account",
+      "imageAlt": "Analytics dashboard with metrics and charts"
     },
     "footer": {
       "tagline": "Market intelligence for MercadoLibre.",
@@ -269,7 +289,7 @@
     "lowestPrice": "Lowest price",
     "highestPrice": "Highest price",
     "bestRanking": "Best ranking",
-    "historyCount": "Snapshot count",
+    "historyCount": "Snapshots",
     "rankingNote": "1 = best position in best-sellers",
     "noHistory": "No history for this product.",
     "totalVisits": "Total visits",
@@ -301,7 +321,21 @@
     "colSeller": "Seller",
     "colDiscount": "Discount",
     "colVisits": "Visits",
-    "noDiscount": "No discount"
+    "noDiscount": "No discount",
+    "vsPrev": "vs. previous",
+    "buyboxShare": "Buy Box share",
+    "buyboxShareNote": "Snapshots won by each seller.",
+    "visitsShare": "Visits by seller",
+    "visitsShareNote": "How attributed visits split across winners.",
+    "others": "Others",
+    "details": "Product details",
+    "detailCurrency": "Local currency",
+    "detailLastSnapshot": "Latest snapshot",
+    "detailSeller": "Current seller",
+    "detailOfficial": "Official store",
+    "detailDiscount": "Current discount",
+    "yes": "Yes",
+    "no": "No"
   },
   "tracked": {
     "title": "Tracked products",

@@ -1,16 +1,16 @@
-# Graph Report - b2b-frontend  (2026-07-05)
+# Graph Report - b2b-frontend  (2026-07-06)
 
 ## Corpus Check
-- 59 files · ~24,097 words
+- 59 files · ~47,664 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 307 nodes · 668 edges · 13 communities (9 shown, 4 thin omitted)
+- 312 nodes · 677 edges · 14 communities (10 shown, 4 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `5780d491`
+- Built from commit: `5d4b9f54`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -28,6 +28,7 @@
 - [[_COMMUNITY_Community 10|Community 10]]
 - [[_COMMUNITY_Community 11|Community 11]]
 - [[_COMMUNITY_Community 12|Community 12]]
+- [[_COMMUNITY_Community 13|Community 13]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `apiFetch()` - 36 edges
@@ -35,44 +36,44 @@
 3. `siteName()` - 19 edges
 4. `compilerOptions` - 16 edges
 5. `useAuth()` - 15 edges
-6. `qs()` - 12 edges
-7. `formatCurrency()` - 12 edges
-8. `formatDate()` - 12 edges
-9. `DataState()` - 11 edges
-10. `formatPercent()` - 11 edges
+6. `formatDate()` - 13 edges
+7. `qs()` - 12 edges
+8. `formatCurrency()` - 12 edges
+9. `formatPercent()` - 12 edges
+10. `DataState()` - 11 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `AdminCategoriesPage()` --calls--> `useAuth()`  [INFERRED]
   src/app/[locale]/(app)/admin/categories/page.tsx → src/lib/auth/auth-context.tsx
-- `ProductDetailPage()` --calls--> `formatNumber()`  [EXTRACTED]
-  src/app/[locale]/(app)/products/[catalogId]/page.tsx → src/lib/format.ts
 - `AdminHomePage()` --calls--> `useAuth()`  [EXTRACTED]
   src/app/[locale]/(app)/admin/page.tsx → src/lib/auth/auth-context.tsx
 - `RolesPage()` --calls--> `useAuth()`  [EXTRACTED]
   src/app/[locale]/(app)/admin/roles/page.tsx → src/lib/auth/auth-context.tsx
 - `AdminSubcategoriesPage()` --calls--> `siteName()`  [EXTRACTED]
   src/app/[locale]/(app)/admin/subcategories/page.tsx → src/lib/ml-sites.ts
+- `ProductDetailPage()` --calls--> `formatDate()`  [EXTRACTED]
+  src/app/[locale]/(app)/products/[catalogId]/page.tsx → src/lib/format.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (13 total, 4 thin omitted)
+## Communities (14 total, 4 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.06
-Nodes (62): apiFetch(), qs(), addProductOverride(), assignCategories(), assignSubcategories(), createGlobalCategory(), createGlobalSubcategory(), createPermission() (+54 more)
+Nodes (61): apiFetch(), qs(), addProductOverride(), assignCategories(), assignSubcategories(), createGlobalCategory(), createGlobalSubcategory(), createPermission() (+53 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.10
-Nodes (42): getProducts(), ChoroplethScope(), CountryCompare(), CountryCompareProps, CountryPanel(), CountryPanelProps, MapLegend(), MapLegendProps (+34 more)
+Cohesion: 0.13
+Nodes (32): getProducts(), getStats(), DataState(), PageHeader(), CategoryAgg, CountryCompare(), CountryCompareProps, CountryPanel() (+24 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.08
 Nodes (22): ApiError, googleLoginUrl(), NAV, AuthProvider(), AuthForm(), FormValues, schema, Brand() (+14 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.11
-Nodes (15): AdminHomePage(), AppShell(), AuthGuard(), PageHeader(), AuthContext, AuthContextValue, useAuth(), AdminCategoriesPage() (+7 more)
+Cohesion: 0.12
+Nodes (13): AdminHomePage(), AppShell(), AuthGuard(), AuthContext, AuthContextValue, useAuth(), AdminCategoriesPage(), AuthUser (+5 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.06
@@ -83,8 +84,8 @@ Cohesion: 0.10
 Nodes (19): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib, module (+11 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.18
-Nodes (9): DataState(), ChartDatum, HistoryChart(), Kpi(), Currency, PriceView, ProductDetailPage(), Currency (+1 more)
+Cohesion: 0.17
+Nodes (9): ChartDatum, HistoryChart(), Kpi(), Currency, ProductDetailPage(), ProductTypeBadge(), SHARE_PALETTE, typeLabel() (+1 more)
 
 ### Community 11 - "Community 11"
 Cohesion: 0.15
@@ -94,25 +95,29 @@ Nodes (11): API contract consumed (via the BFF, `:provider = ml`), Architecture,
 Cohesion: 0.18
 Nodes (14): detectEcommerce(), detectProductUrl(), DetectResult, DetectStatus, Ecommerce, ECOMMERCE_NAMES, ecommerceName(), isMlProductPath() (+6 more)
 
+### Community 13 - "Community 13"
+Cohesion: 0.14
+Nodes (16): ChoroplethScope(), MapLegendProps, HoverInfo, MarketMapProps, ML_BY_NUMERIC, LABEL_KEY, MAP_METRICS, MetricSwitcher() (+8 more)
+
 ## Knowledge Gaps
-- **92 isolated node(s):** `extends`, `withNextIntl`, `nextConfig`, `name`, `version` (+87 more)
+- **93 isolated node(s):** `extends`, `withNextIntl`, `nextConfig`, `name`, `version` (+88 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `useAuth()` connect `Community 3` to `Community 2`?**
-  _High betweenness centrality (0.015) - this node is a cross-community bridge._
-- **Why does `formatNumber()` connect `Community 1` to `Community 3`, `Community 6`?**
-  _High betweenness centrality (0.011) - this node is a cross-community bridge._
+- **Why does `useAuth()` connect `Community 3` to `Community 1`, `Community 2`?**
+  _High betweenness centrality (0.014) - this node is a cross-community bridge._
+- **Why does `formatNumber()` connect `Community 1` to `Community 3`, `Community 13`, `Community 6`?**
+  _High betweenness centrality (0.012) - this node is a cross-community bridge._
 - **What connects `extends`, `withNextIntl`, `nextConfig` to the rest of the system?**
-  _92 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _93 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.062004662004662 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06298076923076923 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.09966329966329966 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.13386524822695037 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.08080808080808081 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.11494252873563218 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.12318840579710146 - nodes in this community are weakly interconnected._
