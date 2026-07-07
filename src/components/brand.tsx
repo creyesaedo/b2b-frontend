@@ -27,19 +27,19 @@ export function Brand({ className = '' }: { className?: string }) {
       <span aria-hidden="true" className="lowercase leading-none tracking-tight">
         cuanto
       </span>
-      {/* Inline so it inherits currentColor (no light/dark asset pair needed). */}
+      {/* Rounded question mark in the logo's accent blue. */}
       <svg
         aria-hidden="true"
-        viewBox="0 0 24 24"
+        viewBox="5 2 14 21"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2.5"
+        strokeWidth="3.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="h-[1em] w-auto self-center"
+        className="ml-0.5 h-[1em] w-auto text-blue-500"
       >
-        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-        <path d="M12 17h.01" />
+        <path d="M8 8.4c0-2.9 1.6-4.65 4-4.65 2.3 0 4 1.75 4 4.25 0 3.2-4 3.4-4 6.5v.5" />
+        <circle cx="12" cy="20.6" r="1.75" stroke="none" fill="currentColor" />
       </svg>
     </span>
   );
