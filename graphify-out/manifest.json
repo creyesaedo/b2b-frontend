@@ -60,8 +60,8 @@
     "semantic_hash": ""
   },
   "src/app/[locale]/(app)/products/page.tsx": {
-    "mtime": 1783091111.851301,
-    "ast_hash": "25e53e056b1bd526015a272a38f0f9d5",
+    "mtime": 1783364628.6444132,
+    "ast_hash": "004119583782c35328274212f476985e",
     "semantic_hash": ""
   },
   "src/app/[locale]/(app)/sellers/page.tsx": {
@@ -70,8 +70,8 @@
     "semantic_hash": "bc14d28d65723588c98726a412a3a7ed"
   },
   "src/app/[locale]/layout.tsx": {
-    "mtime": 1783345782.492163,
-    "ast_hash": "59f795dd512da5cd86504da99f00f281",
+    "mtime": 1783434061.2563682,
+    "ast_hash": "23128d0c2f916aa390995827768fa259",
     "semantic_hash": ""
   },
   "src/app/[locale]/login/page.tsx": {
@@ -80,8 +80,8 @@
     "semantic_hash": "57096bec9c9f29af429debf224fc3757"
   },
   "src/app/[locale]/page.tsx": {
-    "mtime": 1783356148.512035,
-    "ast_hash": "68a53d35be2a541f172bdfc053ef5838",
+    "mtime": 1783434061.2563682,
+    "ast_hash": "b071767003d265fb5441cb01d6e7bf72",
     "semantic_hash": ""
   },
   "src/app/[locale]/signup/page.tsx": {
@@ -115,9 +115,9 @@
     "semantic_hash": ""
   },
   "src/components/brand.tsx": {
-    "mtime": 1782060299.0,
-    "ast_hash": "64e5c73804acde4189ecdf712a3fe475",
-    "semantic_hash": "64e5c73804acde4189ecdf712a3fe475"
+    "mtime": 1783442668.954514,
+    "ast_hash": "8eed16664dc1033983cc01c04ad0db86",
+    "semantic_hash": ""
   },
   "src/components/dashboard/market-map.tsx": {
     "mtime": 1783345782.502163,
@@ -195,13 +195,13 @@
     "semantic_hash": "0e21001f8d180f6f809f1d1b8a519146"
   },
   "src/messages/en.json": {
-    "mtime": 1783359110.1534128,
-    "ast_hash": "24b739868e8b7f7c070fadfd7ef55ea3",
+    "mtime": 1783434061.2563682,
+    "ast_hash": "c51dab3c10b5b881501e03f035550d63",
     "semantic_hash": ""
   },
   "src/messages/es.json": {
-    "mtime": 1783359107.713501,
-    "ast_hash": "085d7d6a8c869a159715bc0235efbfd2",
+    "mtime": 1783434061.2563682,
+    "ast_hash": "c520399fc98e64d94c25194022381205",
     "semantic_hash": ""
   },
   "src/middleware.ts": {
@@ -210,9 +210,9 @@
     "semantic_hash": "b60a884cdd0975cd48d21f071b294172"
   },
   "tailwind.config.ts": {
-    "mtime": 1782060064.0,
-    "ast_hash": "11995e73ecb846c1866375cd13855c6c",
-    "semantic_hash": "11995e73ecb846c1866375cd13855c6c"
+    "mtime": 1783434061.2563682,
+    "ast_hash": "59df8bd9a9cb6218d5763d69dfe7f14a",
+    "semantic_hash": ""
   },
   "tsconfig.json": {
     "mtime": 1782060023.0,
@@ -307,6 +307,16 @@
   "public/landing/exec-meeting.jpg": {
     "mtime": 1783355918.696546,
     "ast_hash": "4bdc4703f51e12e45b764a32def833eb",
+    "semantic_hash": ""
+  },
+  "public/acuanto-logo-dark.png": {
+    "mtime": 1783434618.6983585,
+    "ast_hash": "af8cccdc26f299ce6e72dff65483be51",
+    "semantic_hash": ""
+  },
+  "public/acuanto-logo.png": {
+    "mtime": 1783434264.9473305,
+    "ast_hash": "032424533a19c56c68c07822cd7e3748",
     "semantic_hash": ""
   }
 }
