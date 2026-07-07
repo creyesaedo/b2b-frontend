@@ -53,10 +53,18 @@ export default function LandingPage() {
               <Sparkles className="h-3.5 w-3.5" />
               {t('hero.badge')}
             </span>
-            <h1 className="mt-6 text-4xl font-bold tracking-tight sm:text-5xl">
-              {t('hero.title')}
+            <h1 className="mt-6 font-display text-4xl font-bold leading-[1.15] tracking-tight sm:text-[2.5rem]">
+              {t.rich('hero.title', {
+                highlight: (chunks) => (
+                  <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent sm:whitespace-nowrap dark:from-blue-400 dark:to-cyan-300">
+                    {chunks}
+                  </span>
+                ),
+                nowrap: (chunks) => <span className="sm:whitespace-nowrap">{chunks}</span>,
+                br: () => <br className="hidden sm:block" />,
+              })}
             </h1>
-            <p className="mt-5 text-lg text-gray-600 dark:text-gray-300">
+            <p className="mt-5 text-pretty text-lg leading-relaxed text-gray-600 dark:text-gray-300">
               {t('hero.subtitle')}
             </p>
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
@@ -143,7 +151,9 @@ export default function LandingPage() {
       {/* Features */}
       <section id="features" className="mx-auto max-w-6xl px-4 py-20">
         <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight">{t('features.title')}</h2>
+          <h2 className="text-balance font-display text-3xl font-bold tracking-tight sm:text-4xl">
+            {t('features.title')}
+          </h2>
           <p className="mt-3 text-gray-600 dark:text-gray-300">{t('features.subtitle')}</p>
         </div>
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -176,7 +186,9 @@ export default function LandingPage() {
             />
           </div>
           <div>
-            <h2 className="text-3xl font-bold tracking-tight">{t('decisions.title')}</h2>
+            <h2 className="text-balance font-display text-3xl font-bold tracking-tight sm:text-4xl">
+              {t('decisions.title')}
+            </h2>
             <p className="mt-4 text-gray-600 dark:text-gray-300">{t('decisions.text')}</p>
             <ul className="mt-8 space-y-4">
               {decisionBullets.map((bullet) => (
@@ -192,7 +204,7 @@ export default function LandingPage() {
 
       {/* How it works */}
       <section id="how" className="mx-auto max-w-6xl px-4 py-20">
-        <h2 className="text-center text-3xl font-bold tracking-tight">
+        <h2 className="text-balance text-center font-display text-3xl font-bold tracking-tight sm:text-4xl">
           {t('howItWorks.title')}
         </h2>
         <div className="mt-12 grid gap-8 md:grid-cols-3">
@@ -217,7 +229,9 @@ export default function LandingPage() {
           <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl" />
           <div className="relative grid items-center gap-10 px-8 py-14 sm:px-12 lg:grid-cols-2">
             <div className="text-center lg:text-left">
-              <h2 className="text-3xl font-bold tracking-tight text-white">{t('cta.title')}</h2>
+              <h2 className="text-balance font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                {t('cta.title')}
+              </h2>
               <p className="mt-3 text-gray-300">{t('cta.subtitle')}</p>
               <Link
                 href="/signup"

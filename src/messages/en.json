@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "MercadoMetrics",
+    "appName": "acuanto",
     "loading": "Loading…",
     "error": "Something went wrong",
     "retry": "Retry",
@@ -147,7 +147,7 @@
   "landing": {
     "hero": {
       "badge": "Market intelligence for e-commerce",
-      "title": "Analyze the MercadoLibre market like a pro",
+      "title": "Turn <nowrap>e-commerce</nowrap> data into <highlight>decisions that sell</highlight>",
       "subtitle": "Price trends, best-seller rankings, discounts and sellers — in a clear, actionable dashboard. Make decisions with data, not hunches.",
       "ctaPrimary": "Get started free",
       "ctaSecondary": "See features",
@@ -165,7 +165,7 @@
     },
     "decisions": {
       "title": "Decisions backed by data, not gut feeling",
-      "text": "Stop chasing spreadsheets and screenshots. MercadoMetrics turns market movements into clear signals so your team can decide with confidence.",
+      "text": "Stop chasing spreadsheets and screenshots. acuanto turns market movements into clear signals so your team can decide with confidence.",
       "bullet1": "Spot price increases and drops before your competition.",
       "bullet2": "See which products enter and exit the best-seller rankings.",
       "bullet3": "Compare categories and sellers across countries in a single view.",

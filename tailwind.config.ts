@@ -1,5 +1,6 @@
 import type { Config } from 'tailwindcss';
 import colors from 'tailwindcss/colors';
+import defaultTheme from 'tailwindcss/defaultTheme';
 
 // Tailwind CSS v3 config wired for @tremor/react (it is NOT compatible with
 // Tailwind v4). Content includes the Tremor package so its classes are scanned,
@@ -14,6 +15,10 @@ const config: Config = {
     transparent: 'transparent',
     current: 'currentColor',
     extend: {
+      fontFamily: {
+        sans: ['var(--font-inter)', ...defaultTheme.fontFamily.sans],
+        display: ['var(--font-sora)', ...defaultTheme.fontFamily.sans],
+      },
       colors: {
         // light mode
         tremor: {

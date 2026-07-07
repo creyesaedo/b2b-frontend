@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "MercadoMetrics",
+    "appName": "acuanto",
     "loading": "Cargando…",
     "error": "Algo salió mal",
     "retry": "Reintentar",
@@ -146,8 +146,8 @@
   },
   "landing": {
     "hero": {
-      "badge": "Inteligencia de mercado para e-commerce",
-      "title": "Analiza el mercado de MercadoLibre como un profesional",
+      "badge": "Inteligencia de mercado para comercio electrónico",
+      "title": "Convierte los datos del<br></br><nowrap>comercio electrónico</nowrap><br></br>en <highlight>decisiones que venden</highlight>",
       "subtitle": "Tendencias de precios, ranking de los más vendidos, descuentos y vendedores — en un dashboard claro y accionable. Toma decisiones con datos, no con corazonadas.",
       "ctaPrimary": "Empezar gratis",
       "ctaSecondary": "Ver características",
@@ -165,7 +165,7 @@
     },
     "decisions": {
       "title": "Decisiones respaldadas por datos, no por intuición",
-      "text": "Deja de perseguir planillas y capturas de pantalla. MercadoMetrics convierte los movimientos del mercado en señales claras para que tu equipo decida con confianza.",
+      "text": "Deja de perseguir planillas y capturas de pantalla. acuanto convierte los movimientos del mercado en señales claras para que tu equipo decida con confianza.",
       "bullet1": "Detecta subidas y bajadas de precio antes que tu competencia.",
       "bullet2": "Identifica qué productos entran y salen del ranking de más vendidos.",
       "bullet3": "Compara categorías y vendedores entre países en una sola vista.",
@@ -179,7 +179,7 @@
     },
     "features": {
       "title": "Todo lo que necesitas para entender el mercado",
-      "subtitle": "Diseñado para analistas, vendedores y equipos de e-commerce.",
+      "subtitle": "Diseñado para analistas, vendedores y equipos de comercio electrónico.",
       "priceTitle": "Tendencias de precio",
       "priceText": "Sigue la evolución de precios por producto a lo largo del tiempo, en moneda local y en USD.",
       "rankingTitle": "Dinámica de ranking",
