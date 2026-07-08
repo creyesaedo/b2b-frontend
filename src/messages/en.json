@@ -62,13 +62,39 @@
     "introTitle": "How the information is organized",
     "introMl": "Everything collected from MercadoLibre: the historical product snapshots, categories, sellers, client trackings and the internal tables of the collection process.",
     "introShared": "The hand-curated universal categories that make country comparison possible (and, in the future, other marketplaces like Amazon or eBay).",
-    "introAuth": "The platform's users, sessions, roles and permissions. Lives in a separate database.",
+    "flow": {
+      "title": "How the system works",
+      "subtitle": "A high-level view of the data's journey, from collection to your dashboard. A conceptual reference, without infrastructure details.",
+      "sources": {
+        "title": "Market sources",
+        "desc": "The public marketplaces (currently MercadoLibre) where listings, prices and sellers live."
+      },
+      "collect": {
+        "title": "Automated collection",
+        "desc": "A scheduled process periodically captures listings, prices, sellers and visits, with no manual work."
+      },
+      "normalize": {
+        "title": "Normalization",
+        "desc": "Raw data is cleaned and mapped to universal categories, so markets and countries can be compared."
+      },
+      "store": {
+        "title": "Analytics history",
+        "desc": "Point-in-time snapshots are stored to track how prices, rankings and discounts evolve."
+      },
+      "access": {
+        "title": "Secure access",
+        "desc": "A single entry point validates your session and serves only the information you're allowed to see."
+      },
+      "app": {
+        "title": "Analytics dashboard",
+        "desc": "Dashboard, product explorer, comparisons and trackings, ready for decision-making."
+      }
+    },
     "mlTitle": "How MercadoLibre works under the hood (and how we handle it)",
     "mlSubtitle": "Six quirks of how MercadoLibre operates that explain why the data looks the way it does, and the solution we apply in each case.",
     "mlApproach": "How we handle it",
     "diagramTitle": "Relationship diagram",
     "diagramMarket": "Market data (mercadolibre + shared areas)",
-    "diagramAuth": "Authentication (b2b_auth area)",
     "legendFk": "Direct link",
     "legendSoft": "Logical link",
     "legendNullable": "may be empty",

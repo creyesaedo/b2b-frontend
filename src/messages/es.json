@@ -62,13 +62,39 @@
     "introTitle": "Cómo se organiza la información",
     "introMl": "Todo lo recolectado de MercadoLibre: las fotos históricas de los productos, las categorías, los vendedores, los seguimientos de clientes y las tablas internas del proceso de recolección.",
     "introShared": "Las categorías universales creadas a mano para poder comparar países (y, a futuro, otros marketplaces como Amazon o eBay).",
-    "introAuth": "Los usuarios, sesiones, roles y permisos de la plataforma. Vive en una base de datos separada.",
+    "flow": {
+      "title": "Cómo funciona el sistema",
+      "subtitle": "Una vista general del recorrido de los datos, desde que se recolectan hasta que llegan a tu panel. Es una referencia conceptual, sin detalles de infraestructura.",
+      "sources": {
+        "title": "Fuentes de mercado",
+        "desc": "Los marketplaces públicos (hoy MercadoLibre) donde viven las publicaciones, precios y vendedores."
+      },
+      "collect": {
+        "title": "Recolección automática",
+        "desc": "Un proceso programado captura publicaciones, precios, vendedores y visitas de forma periódica, sin intervención manual."
+      },
+      "normalize": {
+        "title": "Normalización",
+        "desc": "Los datos crudos se limpian y se mapean a categorías universales, para poder comparar entre países y mercados."
+      },
+      "store": {
+        "title": "Histórico analítico",
+        "desc": "Se guardan fotos en el tiempo para ver cómo evolucionan precios, rankings y descuentos."
+      },
+      "access": {
+        "title": "Acceso seguro",
+        "desc": "Un único punto de entrada valida tu sesión y entrega solo la información que estás autorizado a ver."
+      },
+      "app": {
+        "title": "Panel de análisis",
+        "desc": "Dashboard, explorador de productos, comparativas y seguimientos, listos para tomar decisiones."
+      }
+    },
     "mlTitle": "Cómo funciona MercadoLibre por dentro (y cómo lo abordamos)",
     "mlSubtitle": "Seis particularidades del funcionamiento de MercadoLibre que explican por qué los datos son como son, y la solución que aplicamos en cada caso.",
     "mlApproach": "Cómo lo abordamos",
     "diagramTitle": "Diagrama de relaciones",
     "diagramMarket": "Datos de mercado (áreas mercadolibre + shared)",
-    "diagramAuth": "Autenticación (área b2b_auth)",
     "legendFk": "Conexión directa",
     "legendSoft": "Conexión lógica",
     "legendNullable": "puede estar vacío",

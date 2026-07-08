@@ -8,7 +8,6 @@ import { ColumnDoc, RelationDoc, SchemaId, TableDoc, tableById } from '@/lib/db-
 const SCHEMA_BADGE: Record<SchemaId, string> = {
   mercadolibre: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
   shared: 'bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-300',
-  b2b_auth: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
 };
 
 interface Edge {

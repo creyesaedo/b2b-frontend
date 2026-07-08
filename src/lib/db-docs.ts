@@ -6,7 +6,7 @@
 // Texts are written in plain language for non-technical readers.
 
 export type LText = { es: string; en: string };
-export type SchemaId = 'mercadolibre' | 'shared' | 'b2b_auth';
+export type SchemaId = 'mercadolibre' | 'shared';
 export type TableKind = 'analytics' | 'operational';
 
 export interface ColumnDoc {
@@ -845,90 +845,6 @@ export const DB_TABLES: TableDoc[] = [
       { name: 'created_at', type: 'timestamp', nullable: false, what: { es: 'Cuándo ocurrió.', en: 'When it happened.' } },
     ],
   },
-
-  // ── b2b_auth ──────────────────────────────────────────────────────────────
-  {
-    id: 'users',
-    schema: 'b2b_auth',
-    kind: 'operational',
-    description: {
-      es: 'Cuentas de los usuarios de la plataforma. Se puede entrar con contraseña, con Google o con ambas. Si una cuenta con contraseña y un ingreso con Google usan el mismo correo verificado, se unen automáticamente en una sola cuenta.',
-      en: 'Platform user accounts. Sign-in works with a password, with Google, or both. If a password account and a Google sign-in share the same verified email, they automatically merge into one account.',
-    },
-    note: {
-      es: 'Los seguimientos de productos apuntan a estas cuentas (viven en bases de datos separadas).',
-      en: 'Product trackings point to these accounts (they live in separate databases).',
-    },
-    columns: [
-      { name: 'id', type: 'cuid', nullable: false, pk: true, what: { es: 'Identificador del usuario. Es el mismo que usan los seguimientos de productos.', en: 'User identifier. The same one product trackings use.' } },
-      { name: 'email', type: 'text UNIQUE', nullable: false, what: { es: 'Correo de la cuenta (único).', en: 'Account email (unique).' } },
-      { name: 'password_hash', type: 'text', nullable: true, what: { es: 'Contraseña guardada de forma cifrada; vacío en cuentas que solo usan Google.', en: 'Password stored in encrypted form; empty for Google-only accounts.' } },
-      { name: 'google_id', type: 'text UNIQUE', nullable: true, what: { es: 'Cuenta de Google vinculada, si existe.', en: 'Linked Google account, if any.' } },
-      { name: 'name', type: 'text', nullable: true, what: { es: 'Nombre a mostrar.', en: 'Display name.' } },
-      { name: 'avatar_url', type: 'text', nullable: true, what: { es: 'Foto de perfil (normalmente viene de Google).', en: 'Profile picture (usually from Google).' } },
-      { name: 'email_verified', type: 'boolean', nullable: false, what: { es: 'Si el correo está verificado (requisito para unir la cuenta con Google).', en: 'Whether the email is verified (required to merge with Google).' } },
-      { name: 'role_id', type: 'cuid', nullable: false, fk: 'roles', what: { es: 'Rol del usuario (por defecto: "user").', en: 'The user\'s role (default: "user").' } },
-      { name: 'created_at', type: 'timestamp', nullable: false, what: { es: 'Cuándo se creó la cuenta.', en: 'When the account was created.' } },
-      { name: 'updated_at', type: 'timestamp', nullable: false, what: { es: 'Última modificación.', en: 'Last modification.' } },
-    ],
-  },
-  {
-    id: 'sessions',
-    schema: 'b2b_auth',
-    kind: 'operational',
-    description: {
-      es: 'Sesiones abiertas. Al iniciar sesión se crea una fila aquí y el navegador solo guarda una llave que apunta a ella (nunca ve datos sensibles). Se elimina al cerrar sesión o al expirar.',
-      en: 'Open sessions. On sign-in a row is created here and the browser only keeps a key pointing to it (it never sees sensitive data). Deleted on sign-out or expiry.',
-    },
-    columns: [
-      { name: 'id', type: 'cuid', nullable: false, pk: true, what: { es: 'La llave que guarda el navegador.', en: 'The key the browser keeps.' } },
-      { name: 'user_id', type: 'cuid', nullable: false, fk: 'users', what: { es: 'Dueño de la sesión.', en: 'Session owner.' } },
-      { name: 'expires_at', type: 'timestamp', nullable: false, what: { es: 'Cuándo expira (7 días por defecto).', en: 'When it expires (7 days by default).' } },
-      { name: 'created_at', type: 'timestamp', nullable: false, what: { es: 'Inicio de la sesión.', en: 'Session start.' } },
-    ],
-  },
-  {
-    id: 'roles',
-    schema: 'b2b_auth',
-    kind: 'operational',
-    description: {
-      es: 'Conjuntos de permisos con nombre (ej. usuario, administrador). A cada cuenta nueva se le asigna el rol "user" automáticamente.',
-      en: 'Named bundles of permissions (e.g. user, admin). Every new account is automatically assigned the "user" role.',
-    },
-    columns: [
-      { name: 'id', type: 'cuid', nullable: false, pk: true, what: { es: 'Identificador del rol.', en: 'Role identifier.' } },
-      { name: 'name', type: 'text UNIQUE', nullable: false, what: { es: 'Nombre único (ej. "admin").', en: 'Unique name (e.g. "admin").' } },
-      { name: 'description', type: 'text', nullable: true, what: { es: 'Descripción libre.', en: 'Free-form description.' } },
-      { name: 'created_at', type: 'timestamp', nullable: false, what: { es: 'Cuándo se creó el rol.', en: 'When the role was created.' } },
-    ],
-  },
-  {
-    id: 'permissions',
-    schema: 'b2b_auth',
-    kind: 'operational',
-    description: {
-      es: 'Acciones individuales que la plataforma puede permitir o negar (ej. ver el catálogo, ejecutar una recolección, administrar). Se otorgan a los roles.',
-      en: 'Individual actions the platform can allow or deny (e.g. view the catalog, run a collection, administer). They are granted to roles.',
-    },
-    columns: [
-      { name: 'id', type: 'cuid', nullable: false, pk: true, what: { es: 'Identificador del permiso.', en: 'Permission identifier.' } },
-      { name: 'key', type: 'text UNIQUE', nullable: false, what: { es: 'Clave única que el sistema verifica antes de permitir la acción.', en: 'Unique key the system checks before allowing the action.' } },
-      { name: 'description', type: 'text', nullable: true, what: { es: 'Descripción libre.', en: 'Free-form description.' } },
-    ],
-  },
-  {
-    id: 'role_permissions',
-    schema: 'b2b_auth',
-    kind: 'operational',
-    description: {
-      es: 'Tabla que une roles con permisos: define qué puede hacer cada rol.',
-      en: 'Table linking roles with permissions: it defines what each role can do.',
-    },
-    columns: [
-      { name: 'role_id', type: 'cuid', nullable: false, pk: true, fk: 'roles', what: { es: 'Rol que recibe el permiso.', en: 'Role receiving the permission.' } },
-      { name: 'permission_id', type: 'cuid', nullable: false, pk: true, fk: 'permissions', what: { es: 'Permiso otorgado.', en: 'Permission granted.' } },
-    ],
-  },
 ];
 
 // Relations drawn in the diagram. Two products→categories FKs are merged into
@@ -947,25 +863,12 @@ export const MARKET_RELATIONS: RelationDoc[] = [
   { from: 'staging_products', to: 'products', kind: 'soft', label: 'raw → snapshot' },
 ];
 
-export const AUTH_RELATIONS: RelationDoc[] = [
-  { from: 'sessions', to: 'users', kind: 'fk', label: 'user_id' },
-  { from: 'users', to: 'roles', kind: 'fk', label: 'role_id' },
-  { from: 'role_permissions', to: 'roles', kind: 'fk', label: 'role_id' },
-  { from: 'role_permissions', to: 'permissions', kind: 'fk', label: 'permission_id' },
-];
-
 // Diagram lanes: each inner array is one column of stacked table nodes.
 export const MARKET_LAYOUT: string[][] = [
   ['global_categories', 'global_subcategories'],
   ['categories', 'product_category_overrides', 'sync_progress'],
   ['products', 'staging_products', 'failed_scraps'],
   ['sellers', 'catalog_products', 'tracked_products', 'product_visits'],
-];
-
-export const AUTH_LAYOUT: string[][] = [
-  ['sessions', 'permissions'],
-  ['users', 'role_permissions'],
-  ['roles'],
 ];
 
 export function tableById(id: string): TableDoc | undefined {

@@ -1,16 +1,16 @@
 # Graph Report - b2b-frontend  (2026-07-08)
 
 ## Corpus Check
-- 64 files · ~66,876 words
+- 65 files · ~66,378 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 346 nodes · 747 edges · 15 communities (11 shown, 4 thin omitted)
+- 347 nodes · 747 edges · 14 communities (10 shown, 4 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `46751e68`
+- Built from commit: `12e98038`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -18,10 +18,8 @@
 - [[_COMMUNITY_Community 0|Community 0]]
 - [[_COMMUNITY_Community 1|Community 1]]
 - [[_COMMUNITY_Community 2|Community 2]]
-- [[_COMMUNITY_Community 3|Community 3]]
 - [[_COMMUNITY_Community 4|Community 4]]
 - [[_COMMUNITY_Community 5|Community 5]]
-- [[_COMMUNITY_Community 6|Community 6]]
 - [[_COMMUNITY_Community 7|Community 7]]
 - [[_COMMUNITY_Community 8|Community 8]]
 - [[_COMMUNITY_Community 9|Community 9]]
@@ -30,6 +28,7 @@
 - [[_COMMUNITY_Community 12|Community 12]]
 - [[_COMMUNITY_Community 13|Community 13]]
 - [[_COMMUNITY_Community 14|Community 14]]
+- [[_COMMUNITY_Community 15|Community 15]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `apiFetch()` - 36 edges
@@ -52,29 +51,25 @@
   src/app/[locale]/(app)/admin/page.tsx → src/lib/auth/auth-context.tsx
 - `RolesPage()` --calls--> `useAuth()`  [EXTRACTED]
   src/app/[locale]/(app)/admin/roles/page.tsx → src/lib/auth/auth-context.tsx
-- `AdminSubcategoriesPage()` --calls--> `siteName()`  [EXTRACTED]
-  src/app/[locale]/(app)/admin/subcategories/page.tsx → src/lib/ml-sites.ts
+- `AdminSubcategoriesPage()` --calls--> `useAuth()`  [EXTRACTED]
+  src/app/[locale]/(app)/admin/subcategories/page.tsx → src/lib/auth/auth-context.tsx
 
 ## Import Cycles
 - None detected.
 
-## Communities (15 total, 4 thin omitted)
+## Communities (14 total, 4 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.06
-Nodes (61): apiFetch(), qs(), addProductOverride(), assignCategories(), assignSubcategories(), createGlobalCategory(), createGlobalSubcategory(), createPermission() (+53 more)
+Nodes (64): apiFetch(), qs(), addProductOverride(), assignCategories(), assignSubcategories(), createGlobalCategory(), createGlobalSubcategory(), createPermission() (+56 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.09
-Nodes (45): getProducts(), getStats(), ProductDetailPage(), CategoryAgg, ChoroplethScope(), CountryCompare(), CountryCompareProps, CountryPanel() (+37 more)
+Nodes (40): getProducts(), getStats(), DataState(), ChartDatum, HistoryChart(), Kpi(), PageHeader(), Currency (+32 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.09
-Nodes (25): AdminHomePage(), googleLoginUrl(), AppShell(), NAV, AuthGuard(), useAuth(), AuthForm(), FormValues (+17 more)
-
-### Community 3 - "Community 3"
-Cohesion: 0.18
-Nodes (6): DataState(), PageHeader(), GlobalSubcategory, Product, SubcategoryCandidate, SellerAgg
+Nodes (22): AdminHomePage(), ApiError, googleLoginUrl(), AppShell(), NAV, AuthGuard(), AuthContext, AuthContextValue (+14 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.06
@@ -84,45 +79,45 @@ Nodes (35): dependencies, flag-icons, @hookform/resolvers, lucide-react, next, n
 Cohesion: 0.10
 Nodes (19): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib, module (+11 more)
 
-### Community 6 - "Community 6"
-Cohesion: 0.17
-Nodes (9): ChartDatum, HistoryChart(), Kpi(), Currency, ProductTypeBadge(), SHARE_PALETTE, typeLabel(), View (+1 more)
-
 ### Community 11 - "Community 11"
 Cohesion: 0.15
 Nodes (11): API contract consumed (via the BFF, `:provider = ml`), Architecture, CLAUDE.md — b2b-frontend, Commands, Conventions, Data dependency, Stack, b2b-frontend (+3 more)
 
 ### Community 12 - "Community 12"
-Cohesion: 0.18
-Nodes (14): detectEcommerce(), detectProductUrl(), DetectResult, DetectStatus, Ecommerce, ECOMMERCE_NAMES, ecommerceName(), isMlProductPath() (+6 more)
+Cohesion: 0.24
+Nodes (10): detectEcommerce(), detectProductUrl(), DetectResult, DetectStatus, Ecommerce, ECOMMERCE_NAMES, isMlProductPath(), ML_DOMAIN_TO_SITE (+2 more)
 
 ### Community 13 - "Community 13"
-Cohesion: 0.12
-Nodes (23): DbDiagram(), Edge, SCHEMA_BADGE, ConceptCard(), SCHEMA_ORDER, TableSection(), AUTH_LAYOUT, AUTH_RELATIONS (+15 more)
+Cohesion: 0.11
+Nodes (23): DbDiagram(), Edge, SCHEMA_BADGE, STEPS, SystemFlow(), ConceptCard(), SCHEMA_ORDER, TableSection() (+15 more)
 
 ### Community 14 - "Community 14"
 Cohesion: 0.15
-Nodes (10): ApiError, AuthContext, AuthContextValue, AuthProvider(), Providers(), QueryProvider(), AuthUser, inter (+2 more)
+Nodes (11): AuthProvider(), Providers(), Locale, routing, QueryProvider(), inter, metadata, sora (+3 more)
+
+### Community 15 - "Community 15"
+Cohesion: 0.13
+Nodes (23): ChoroplethScope(), CountryCompare(), MapLegend(), MapLegendProps, HoverInfo, MarketMap(), MarketMapProps, ML_BY_NUMERIC (+15 more)
 
 ## Knowledge Gaps
-- **100 isolated node(s):** `extends`, `withNextIntl`, `nextConfig`, `name`, `version` (+95 more)
+- **101 isolated node(s):** `extends`, `withNextIntl`, `nextConfig`, `name`, `version` (+96 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `useAuth()` connect `Community 2` to `Community 1`, `Community 3`, `Community 13`, `Community 14`?**
+- **Why does `useAuth()` connect `Community 2` to `Community 1`, `Community 13`?**
   _High betweenness centrality (0.026) - this node is a cross-community bridge._
-- **Why does `routing` connect `Community 2` to `Community 14`?**
+- **Why does `routing` connect `Community 14` to `Community 1`?**
   _High betweenness centrality (0.018) - this node is a cross-community bridge._
-- **Why does `PageHeader()` connect `Community 3` to `Community 1`, `Community 12`, `Community 13`?**
+- **Why does `PageHeader()` connect `Community 1` to `Community 2`, `Community 13`, `Community 15`?**
   _High betweenness centrality (0.018) - this node is a cross-community bridge._
 - **What connects `extends`, `withNextIntl`, `nextConfig` to the rest of the system?**
-  _100 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _101 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.06153846153846154 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.058823529411764705 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.0912568306010929 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08671328671328671 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.08888888888888889 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08970099667774087 - nodes in this community are weakly interconnected._

@@ -5,11 +5,10 @@ import { Badge, Card, Text, Title } from '@tremor/react';
 import { ArrowLeft } from 'lucide-react';
 import { PageHeader } from '@/components/app/page-header';
 import { DbDiagram } from '@/components/admin/db-diagram';
+import { SystemFlow } from '@/components/admin/system-flow';
 import { Link } from '@/i18n/navigation';
 import { useAuth } from '@/lib/auth/auth-context';
 import {
-  AUTH_LAYOUT,
-  AUTH_RELATIONS,
   DB_TABLES,
   MARKET_LAYOUT,
   MARKET_RELATIONS,
@@ -19,7 +18,7 @@ import {
 } from '@/lib/db-docs';
 import { ML_CONCEPTS, MlConceptDoc } from '@/lib/ml-docs';
 
-const SCHEMA_ORDER: SchemaId[] = ['shared', 'mercadolibre', 'b2b_auth'];
+const SCHEMA_ORDER: SchemaId[] = ['shared', 'mercadolibre'];
 
 export default function DocumentationPage() {
   const t = useTranslations('dbDocs');
@@ -50,10 +49,15 @@ export default function DocumentationPage() {
             <li>
               <code className="font-semibold">shared</code> — {t('introShared')}
             </li>
-            <li>
-              <code className="font-semibold">b2b_auth</code> — {t('introAuth')}
-            </li>
           </ul>
+        </Card>
+
+        <Card className="dark:!bg-gray-900">
+          <Title>{t('flow.title')}</Title>
+          <Text className="mt-1">{t('flow.subtitle')}</Text>
+          <div className="mt-6">
+            <SystemFlow />
+          </div>
         </Card>
 
         <div className="pt-2">
@@ -96,11 +100,6 @@ export default function DocumentationPage() {
             {t('diagramMarket')}
           </h3>
           <DbDiagram layout={MARKET_LAYOUT} relations={MARKET_RELATIONS} />
-
-          <h3 className="mb-4 mt-10 text-sm font-semibold text-gray-700 dark:text-gray-200">
-            {t('diagramAuth')}
-          </h3>
-          <DbDiagram layout={AUTH_LAYOUT} relations={AUTH_RELATIONS} />
         </Card>
 
         <h2 className="pt-2 text-lg font-semibold text-gray-800 dark:text-gray-100">
@@ -142,7 +141,7 @@ function TableSection({ table }: { table: TableDoc }) {
     <Card id={`tbl-${table.id}`} className="scroll-mt-6 dark:!bg-gray-900">
       <div className="flex flex-wrap items-center gap-2">
         <Title className="font-mono">{table.id}</Title>
-        <Badge color={table.schema === 'shared' ? 'violet' : table.schema === 'b2b_auth' ? 'amber' : 'blue'} size="xs">
+        <Badge color={table.schema === 'shared' ? 'violet' : 'blue'} size="xs">
           {table.schema}
         </Badge>
         <Badge color={table.kind === 'analytics' ? 'emerald' : 'gray'} size="xs">
