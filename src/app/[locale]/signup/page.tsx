@@ -1,5 +1,10 @@
 import { AuthForm } from '@/components/auth/auth-form';
+import { RedirectIfAuthenticated } from '@/components/auth/redirect-if-authenticated';
 
 export default function SignupPage() {
-  return <AuthForm mode="signup" />;
+  return (
+    <RedirectIfAuthenticated>
+      <AuthForm mode="signup" />
+    </RedirectIfAuthenticated>
+  );
 }

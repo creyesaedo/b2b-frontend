@@ -14,6 +14,7 @@ import {
 import { Link } from '@/i18n/navigation';
 import { Brand } from '@/components/brand';
 import { SiteHeader } from '@/components/landing/site-header';
+import { RedirectIfAuthenticated } from '@/components/auth/redirect-if-authenticated';
 
 export default function LandingPage() {
   const t = useTranslations('landing');
@@ -41,6 +42,7 @@ export default function LandingPage() {
   ];
 
   return (
+    <RedirectIfAuthenticated>
     <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
       <SiteHeader />
 
@@ -273,5 +275,6 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
+    </RedirectIfAuthenticated>
   );
 }
