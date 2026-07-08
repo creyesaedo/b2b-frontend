@@ -25,8 +25,8 @@
     "semantic_hash": "051d4ba047610f2c242d89d9066b37c8"
   },
   "src/app/[locale]/(app)/admin/page.tsx": {
-    "mtime": 1783515683.3541129,
-    "ast_hash": "e270ce86aef924037d1d35d15a382e88",
+    "mtime": 1783546848.113315,
+    "ast_hash": "79937c06d1923f5c457317c38cd9fab8",
     "semantic_hash": ""
   },
   "src/app/[locale]/(app)/admin/roles/page.tsx": {
@@ -90,8 +90,8 @@
     "semantic_hash": ""
   },
   "src/components/app/app-shell.tsx": {
-    "mtime": 1783345782.502163,
-    "ast_hash": "b8224d4eafae3e76e8b06d425faa231c",
+    "mtime": 1783546838.2645328,
+    "ast_hash": "c55098c4e9fd157e1a90516d019fa958",
     "semantic_hash": ""
   },
   "src/components/app/auth-guard.tsx": {
@@ -195,13 +195,13 @@
     "semantic_hash": "0e21001f8d180f6f809f1d1b8a519146"
   },
   "src/messages/en.json": {
-    "mtime": 1783545773.981141,
-    "ast_hash": "0773dda8f6af21a5714b84140c747968",
+    "mtime": 1783546856.876787,
+    "ast_hash": "095027d515125a835dc76bccd4cbb193",
     "semantic_hash": ""
   },
   "src/messages/es.json": {
-    "mtime": 1783545768.929728,
-    "ast_hash": "0a26a2a7e9d4cfaaa2ed2cf362e863a9",
+    "mtime": 1783546855.2561762,
+    "ast_hash": "df4bd63f687c9bd75272155d538a0d32",
     "semantic_hash": ""
   },
   "src/middleware.ts": {
@@ -319,11 +319,6 @@
     "ast_hash": "032424533a19c56c68c07822cd7e3748",
     "semantic_hash": ""
   },
-  "src/app/[locale]/(app)/admin/documentation/page.tsx": {
-    "mtime": 1783545756.675306,
-    "ast_hash": "34e633a7740259581c840c1d9592d847",
-    "semantic_hash": ""
-  },
   "src/components/admin/db-diagram.tsx": {
     "mtime": 1783545600.712537,
     "ast_hash": "34bac765723f41346db32b57681acf0e",
@@ -335,18 +330,23 @@
     "semantic_hash": ""
   },
   "src/lib/db-docs.ts": {
-    "mtime": 1783545560.5260954,
-    "ast_hash": "e5702fa703287cc9cced7b0c6a21c9e8",
+    "mtime": 1783546873.3121865,
+    "ast_hash": "2484502087a9a4b6fb7ed5f96a85b88d",
     "semantic_hash": ""
   },
   "src/lib/ml-docs.ts": {
-    "mtime": 1783519916.5754044,
-    "ast_hash": "ee0de77f9f113c1a78b8bc2f17a1425b",
+    "mtime": 1783546871.7158432,
+    "ast_hash": "f20d7b8a295eb9fdc5fd5fdcaa529a77",
     "semantic_hash": ""
   },
   "src/components/admin/system-flow.tsx": {
     "mtime": 1783545746.4325008,
     "ast_hash": "fdfbbc8c1530af9d02cc85d22beda5be",
+    "semantic_hash": ""
+  },
+  "src/app/[locale]/(app)/documentation/page.tsx": {
+    "mtime": 1783546814.97366,
+    "ast_hash": "9902be7dce11070a6204cd56b9e37a6c",
     "semantic_hash": ""
   }
 }

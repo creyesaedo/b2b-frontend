@@ -4,7 +4,6 @@ import { useTranslations } from 'next-intl';
 import { Badge, Card, Text, Title } from '@tremor/react';
 import {
   ArrowRight,
-  BookOpen,
   Database,
   LayoutGrid,
   LucideIcon,
@@ -64,15 +63,6 @@ export default function AdminHomePage() {
             title={t('usersTitle')}
             description={t('usersDesc')}
             badge={t('comingSoon')}
-          />
-        </Section>
-
-        <Section icon={BookOpen} title={t('sectionDocs')}>
-          <AdminCard
-            href="/admin/documentation"
-            icon={Database}
-            title={t('docsTitle')}
-            description={t('docsDesc')}
           />
         </Section>
       </div>

@@ -1,7 +1,7 @@
 # Graph Report - b2b-frontend  (2026-07-08)
 
 ## Corpus Check
-- 65 files · ~66,378 words
+- 65 files · ~66,332 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `12e98038`
+- Built from commit: `b6f4cfd4`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -45,14 +45,14 @@
 ## Surprising Connections (you probably didn't know these)
 - `AdminCategoriesPage()` --calls--> `useAuth()`  [INFERRED]
   src/app/[locale]/(app)/admin/categories/page.tsx → src/lib/auth/auth-context.tsx
-- `DocumentationPage()` --calls--> `useAuth()`  [EXTRACTED]
-  src/app/[locale]/(app)/admin/documentation/page.tsx → src/lib/auth/auth-context.tsx
 - `AdminHomePage()` --calls--> `useAuth()`  [EXTRACTED]
   src/app/[locale]/(app)/admin/page.tsx → src/lib/auth/auth-context.tsx
 - `RolesPage()` --calls--> `useAuth()`  [EXTRACTED]
   src/app/[locale]/(app)/admin/roles/page.tsx → src/lib/auth/auth-context.tsx
 - `AdminSubcategoriesPage()` --calls--> `useAuth()`  [EXTRACTED]
   src/app/[locale]/(app)/admin/subcategories/page.tsx → src/lib/auth/auth-context.tsx
+- `DashboardPage()` --calls--> `formatDate()`  [EXTRACTED]
+  src/app/[locale]/(app)/dashboard/page.tsx → src/lib/format.ts
 
 ## Import Cycles
 - None detected.

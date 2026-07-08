@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import {
   BarChart3,
   Bookmark,
+  BookOpen,
   LayoutDashboard,
   LogOut,
   Package,
@@ -23,6 +24,7 @@ const NAV = [
   { href: '/tracked', icon: Bookmark, key: 'tracked', permission: null },
   { href: '/categories', icon: Tags, key: 'categories', permission: null },
   { href: '/sellers', icon: Store, key: 'sellers', permission: null },
+  { href: '/documentation', icon: BookOpen, key: 'documentation', permission: null },
   { href: '/admin', icon: SlidersHorizontal, key: 'admin', permission: 'admin:manage' },
 ] as const;
 

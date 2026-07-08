@@ -2,12 +2,9 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import { Badge, Card, Text, Title } from '@tremor/react';
-import { ArrowLeft } from 'lucide-react';
 import { PageHeader } from '@/components/app/page-header';
 import { DbDiagram } from '@/components/admin/db-diagram';
 import { SystemFlow } from '@/components/admin/system-flow';
-import { Link } from '@/i18n/navigation';
-import { useAuth } from '@/lib/auth/auth-context';
 import {
   DB_TABLES,
   MARKET_LAYOUT,
@@ -22,21 +19,9 @@ const SCHEMA_ORDER: SchemaId[] = ['shared', 'mercadolibre'];
 
 export default function DocumentationPage() {
   const t = useTranslations('dbDocs');
-  const { hasPermission } = useAuth();
-
-  if (!hasPermission('admin:manage')) {
-    return <div className="py-20 text-center text-gray-500">{t('noAccess')}</div>;
-  }
 
   return (
     <>
-      <Link
-        href="/admin"
-        className="mb-4 inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        {t('back')}
-      </Link>
       <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
       <div className="space-y-6">

@@ -1,5 +1,5 @@
 // Static documentation of the ecosystem's databases, rendered by
-// /admin/documentation. Content is data (not UI chrome), so it carries its own
+// /documentation. Content is data (not UI chrome), so it carries its own
 // es/en texts instead of living in the message bundles. Source of truth for
 // semantics: ml-service/prisma/schema.prisma + ml-service/DATABASE.md and
 // b2b-auth-service/prisma/schema.prisma — keep in sync when models change.

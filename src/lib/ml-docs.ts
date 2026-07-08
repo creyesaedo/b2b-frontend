@@ -1,5 +1,5 @@
 // Static documentation about how MercadoLibre works internally and how this
-// platform approaches each quirk. Rendered by /admin/documentation. Like
+// platform approaches each quirk. Rendered by /documentation. Like
 // db-docs.ts, content is data and carries its own es/en texts.
 
 import { LText } from './db-docs';
