@@ -77,6 +77,13 @@ export const logout = () => apiFetch<void>('/auth/logout', { method: 'POST' });
 /** Full-page navigation target that starts the Google OAuth dance on the BFF. */
 export const googleLoginUrl = () => `${BFF_URL}/auth/google`;
 
+/**
+ * Full-page nav to attach Google to the CURRENTLY logged-in account (account
+ * settings), as opposed to `googleLoginUrl` which logs in / signs up. The BFF
+ * only links to the current session when this `link=1` flag is present.
+ */
+export const googleLinkUrl = () => `${BFF_URL}/auth/google?link=1`;
+
 // --- Data -------------------------------------------------------------------
 
 export const getStats = () => apiFetch<Stats>(`/v1/${PROVIDER}/stats`);
