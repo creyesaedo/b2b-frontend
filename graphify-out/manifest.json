@@ -205,9 +205,9 @@
     "semantic_hash": ""
   },
   "src/middleware.ts": {
-    "mtime": 1782086558.0,
-    "ast_hash": "b60a884cdd0975cd48d21f071b294172",
-    "semantic_hash": "b60a884cdd0975cd48d21f071b294172"
+    "mtime": 1783544903.5034354,
+    "ast_hash": "baef5166c67e9e92c39f618cbe2e70eb",
+    "semantic_hash": ""
   },
   "tailwind.config.ts": {
     "mtime": 1783434061.2563682,

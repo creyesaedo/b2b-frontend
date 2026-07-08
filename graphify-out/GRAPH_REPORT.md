@@ -1,7 +1,7 @@
 # Graph Report - b2b-frontend  (2026-07-08)
 
 ## Corpus Check
-- 64 files · ~66,839 words
+- 64 files · ~66,876 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `43fda0f4`
+- Built from commit: `46751e68`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
