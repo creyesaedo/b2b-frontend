@@ -247,6 +247,17 @@
       "sellerTitle": "Análisis de vendedores",
       "sellerText": "Identifica a los principales vendedores y la presencia de tiendas oficiales."
     },
+    "tracking": {
+      "badge": "Seguimiento de productos",
+      "title": "Sigue los productos específicos que te importan",
+      "text": "¿No quieres analizar todo el mercado? Marca productos puntuales y deja que acuanto vigile su precio, ranking y disponibilidad por ti — con todo su historial a un clic.",
+      "watchTitle": "Elige tus productos",
+      "watchText": "Marca cualquier publicación o producto de catálogo que quieras vigilar y tenlo siempre a mano en tu lista de seguimiento.",
+      "alertTitle": "Detecta cambios clave",
+      "alertText": "Identifica subidas y bajadas de precio, cambios de stock y movimientos de ranking en los productos que sigues.",
+      "historyTitle": "Historial completo",
+      "historyText": "Consulta la evolución de precio y posición de cada producto seguido a lo largo del tiempo."
+    },
     "howItWorks": {
       "title": "Cómo funciona",
       "step1Title": "Recopilamos",
@@ -387,6 +398,7 @@
     "visitsShareNote": "Distribución de las visitas atribuidas a cada ganador.",
     "others": "Otros",
     "details": "Detalles del producto",
+    "detailBrand": "Marca",
     "detailCurrency": "Moneda local",
     "detailLastSnapshot": "Último snapshot",
     "detailSeller": "Vendedor actual",

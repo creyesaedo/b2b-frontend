@@ -3,8 +3,10 @@ import { useTranslations } from 'next-intl';
 import {
   ArrowRight,
   BarChart3,
+  Bell,
   CheckCircle2,
   Database,
+  Eye,
   LineChart,
   Sparkles,
   Store,
@@ -31,6 +33,12 @@ export default function LandingPage() {
     { icon: Database, title: t('howItWorks.step1Title'), text: t('howItWorks.step1Text') },
     { icon: Sparkles, title: t('howItWorks.step2Title'), text: t('howItWorks.step2Text') },
     { icon: LineChart, title: t('howItWorks.step3Title'), text: t('howItWorks.step3Text') },
+  ];
+
+  const trackingItems = [
+    { icon: Eye, title: t('tracking.watchTitle'), text: t('tracking.watchText') },
+    { icon: Bell, title: t('tracking.alertTitle'), text: t('tracking.alertText') },
+    { icon: LineChart, title: t('tracking.historyTitle'), text: t('tracking.historyText') },
   ];
 
   const trustItems = [t('hero.trust1'), t('hero.trust2'), t('hero.trust3')];
@@ -169,6 +177,34 @@ export default function LandingPage() {
               </div>
               <h3 className="mt-4 font-semibold">{f.title}</h3>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{f.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Product tracking */}
+      <section id="tracking" className="mx-auto max-w-6xl px-4 pb-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-300">
+            <Bell className="h-3.5 w-3.5" />
+            {t('tracking.badge')}
+          </span>
+          <h2 className="mt-6 text-balance font-display text-3xl font-bold tracking-tight sm:text-4xl">
+            {t('tracking.title')}
+          </h2>
+          <p className="mt-4 text-pretty text-gray-600 dark:text-gray-300">{t('tracking.text')}</p>
+        </div>
+        <div className="mt-12 grid gap-6 sm:grid-cols-3">
+          {trackingItems.map((item) => (
+            <div
+              key={item.title}
+              className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-blue-900"
+            >
+              <div className="inline-flex rounded-xl bg-blue-50 p-3 text-blue-600 dark:bg-blue-950 dark:text-blue-300">
+                <item.icon className="h-6 w-6" />
+              </div>
+              <h3 className="mt-4 font-semibold">{item.title}</h3>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{item.text}</p>
             </div>
           ))}
         </div>

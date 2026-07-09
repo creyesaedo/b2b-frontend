@@ -97,6 +97,7 @@ export interface HistoryPoint {
   sold_count: number | null;
   /** Visits in the trailing 7 days at the time of the snapshot. */
   weekly_visits: number | null;
+  brand: string | null;
   ml_public_id: string | null;
   catalog_id: string | null;
   /** URL-form class: 'catalog' (/p/), 'user_product' (/up/), 'listing' (classic). */

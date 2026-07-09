@@ -553,6 +553,7 @@ export default function ProductDetailPage() {
                 label={t('productType')}
                 value={typeLabel(productType, t)}
               />
+              <DetailRow label={t('detailBrand')} value={latest?.brand ?? '—'} />
               <DetailRow label={t('detailCurrency')} value={localCcy} />
               <DetailRow
                 label={t('detailLastSnapshot')}

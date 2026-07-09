@@ -61,6 +61,7 @@ export default function TrackedDetailPage() {
   const priceFmt = (v: number) => formatCurrency(v, ccyCode, locale);
 
   const productName = history.length ? (history[history.length - 1].name ?? canonicalId) : canonicalId;
+  const brand = history.length ? (history[history.length - 1].brand ?? null) : null;
 
   // Chart series (ascending), price following the currency toggle.
   const points = useMemo(
@@ -110,6 +111,11 @@ export default function TrackedDetailPage() {
       <h1 className="mb-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
         {productName ?? t('title')}
       </h1>
+      {brand && (
+        <p className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+          {pd('detailBrand')}: {brand}
+        </p>
+      )}
       {subscription && (
         <p className="mb-5 text-sm text-gray-500 dark:text-gray-400">
           {siteName(subscription.country)} · {t('cadenceDays', { days: Math.round(subscription.cadence_hours / 24) })}

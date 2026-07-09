@@ -247,6 +247,17 @@
       "sellerTitle": "Seller analysis",
       "sellerText": "Identify the top sellers and the presence of official stores."
     },
+    "tracking": {
+      "badge": "Product tracking",
+      "title": "Track the specific products that matter to you",
+      "text": "Don't want to analyze the whole market? Flag individual products and let acuanto watch their price, ranking and availability for you — with their full history one click away.",
+      "watchTitle": "Pick your products",
+      "watchText": "Flag any listing or catalog product you want to watch and keep it handy in your tracking list.",
+      "alertTitle": "Spot key changes",
+      "alertText": "See price increases and drops, stock changes and ranking movements on the products you follow.",
+      "historyTitle": "Full history",
+      "historyText": "Review how each tracked product’s price and position evolve over time."
+    },
     "howItWorks": {
       "title": "How it works",
       "step1Title": "We collect",
@@ -387,6 +398,7 @@
     "visitsShareNote": "How attributed visits split across winners.",
     "others": "Others",
     "details": "Product details",
+    "detailBrand": "Brand",
     "detailCurrency": "Local currency",
     "detailLastSnapshot": "Latest snapshot",
     "detailSeller": "Current seller",
