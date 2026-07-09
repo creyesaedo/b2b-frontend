@@ -174,14 +174,15 @@ export default function TrackedProductsPage() {
                   </TableCell>
                   <TableCell className="max-w-[280px]">
                     {isPending && !tp.name ? (
-                      // No product name yet — show a shimmer placeholder rather than
-                      // the raw URL, and don't link to an empty detail page.
-                      <span className="flex items-center gap-2" title={t('pendingHint')}>
-                        <span className="h-4 w-40 max-w-full animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
-                        <span className="shrink-0 text-xs text-gray-400 dark:text-gray-500">
-                          {t('checking')}
-                        </span>
-                      </span>
+                      // No product name yet — show a skeleton placeholder line rather
+                      // than the raw URL, and don't link to an empty detail page. The
+                      // "checking" state is already conveyed by the status badge and
+                      // the last-check column, so no redundant label here.
+                      <span
+                        className="block h-4 w-40 max-w-full animate-pulse rounded bg-gray-200 dark:bg-gray-700"
+                        title={t('pendingHint')}
+                        aria-label={t('checking')}
+                      />
                     ) : (
                       <Link
                         href={`/tracked/${tp.id}`}
