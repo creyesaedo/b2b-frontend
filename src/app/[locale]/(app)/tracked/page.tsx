@@ -18,7 +18,7 @@ import {
   TextInput,
   Title,
 } from '@tremor/react';
-import { ArrowRight, Trash2 } from 'lucide-react';
+import { ArrowRight, Loader2, Trash2 } from 'lucide-react';
 import { DataState } from '@/components/app/data-state';
 import { PageHeader } from '@/components/app/page-header';
 import { Link } from '@/i18n/navigation';
@@ -55,6 +55,10 @@ export default function TrackedProductsPage() {
   const trackedQuery = useQuery({
     queryKey: ['tracked-products'],
     queryFn: api.getTrackedProducts,
+    // While any follow is still awaiting its first snapshot (active but never
+    // run), poll so the row fills in on its own once the seed scrape lands.
+    refetchInterval: (query) =>
+      (query.state.data ?? []).some((tp) => tp.active && !tp.last_run_at) ? 5000 : false,
   });
 
   const invalidate = () => qc.invalidateQueries({ queryKey: ['tracked-products'] });
@@ -157,37 +161,77 @@ export default function TrackedProductsPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {tracked.map((tp) => (
+              {tracked.map((tp) => {
+                // A follow that is active but has never run is still awaiting its
+                // first snapshot (the seed scrape). Until it lands we have no name,
+                // no last check, and the next-check date is meaningless — so the row
+                // shows a dedicated "pending" treatment instead of the active one.
+                const isPending = tp.active && !tp.last_run_at;
+                return (
                 <TableRow key={tp.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                   <TableCell className="whitespace-nowrap text-gray-600 dark:text-gray-300">
                     {siteName(tp.country)}
                   </TableCell>
                   <TableCell className="max-w-[280px]">
-                    <Link
-                      href={`/tracked/${tp.id}`}
-                      title={tp.url}
-                      className="inline-flex max-w-full items-center gap-1 font-medium text-blue-600 hover:underline dark:text-blue-400"
-                    >
-                      <span className="truncate">
-                        {tp.name ?? tp.catalog_id ?? tp.ml_public_id ?? tp.url}
+                    {isPending && !tp.name ? (
+                      // No product name yet — show a shimmer placeholder rather than
+                      // the raw URL, and don't link to an empty detail page.
+                      <span className="flex items-center gap-2" title={t('pendingHint')}>
+                        <span className="h-4 w-40 max-w-full animate-pulse rounded bg-gray-200 dark:bg-gray-700" />
+                        <span className="shrink-0 text-xs text-gray-400 dark:text-gray-500">
+                          {t('checking')}
+                        </span>
                       </span>
-                      <ArrowRight className="h-3.5 w-3.5 shrink-0" />
-                    </Link>
+                    ) : (
+                      <Link
+                        href={`/tracked/${tp.id}`}
+                        title={tp.url}
+                        className="inline-flex max-w-full items-center gap-1 font-medium text-blue-600 hover:underline dark:text-blue-400"
+                      >
+                        <span className="truncate">
+                          {tp.name ?? tp.catalog_id ?? tp.ml_public_id ?? tp.url}
+                        </span>
+                        <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+                      </Link>
+                    )}
                   </TableCell>
                   <TableCell>
                     {t('cadenceDays', { days: Math.round(tp.cadence_hours / HOURS_PER_DAY) })}
                   </TableCell>
                   <TableCell className="whitespace-nowrap text-gray-600 dark:text-gray-300">
-                    {tp.last_run_at ? formatDate(tp.last_run_at, locale) : t('never')}
+                    {isPending ? (
+                      <span className="inline-flex items-center gap-1.5 text-gray-400 dark:text-gray-500">
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        {t('checking')}
+                      </span>
+                    ) : tp.last_run_at ? (
+                      formatDate(tp.last_run_at, locale)
+                    ) : (
+                      t('never')
+                    )}
                   </TableCell>
                   <TableCell className="whitespace-nowrap text-gray-600 dark:text-gray-300">
-                    {/* next_run_at is a day-marker at 00:00 UTC → read it in UTC. */}
-                    {formatDate(tp.next_run_at, locale, { utc: true })}
+                    {/* next_run_at is a day-marker at 00:00 UTC → read it in UTC.
+                        While pending, the stored value is "now" and carries no
+                        meaning yet, so show a dash. */}
+                    {isPending ? '—' : formatDate(tp.next_run_at, locale, { utc: true })}
                   </TableCell>
                   <TableCell>
-                    <Badge color={tp.active ? 'emerald' : 'gray'} size="xs">
-                      {tp.active ? t('active') : t('inactive')}
-                    </Badge>
+                    {isPending ? (
+                      <Badge
+                        color="amber"
+                        size="xs"
+                        icon={() => (
+                          <span className="mr-1 h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
+                        )}
+                      >
+                        {t('pending')}
+                      </Badge>
+                    ) : (
+                      <Badge color={tp.active ? 'emerald' : 'gray'} size="xs">
+                        {tp.active ? t('active') : t('inactive')}
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     <button
@@ -201,7 +245,8 @@ export default function TrackedProductsPage() {
                     </button>
                   </TableCell>
                 </TableRow>
-              ))}
+                );
+              })}
             </TableBody>
           </Table>
         </Card>
