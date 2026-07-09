@@ -55,8 +55,8 @@
     "semantic_hash": "a18e79f5dca0fd5db23e3699754a667f"
   },
   "src/app/[locale]/(app)/products/[catalogId]/page.tsx": {
-    "mtime": 1783357976.6068308,
-    "ast_hash": "b3239722856f7e37506c8288bf30c0c0",
+    "mtime": 1783616128.466137,
+    "ast_hash": "eeb66a39f9d430d7a0a708cd07113432",
     "semantic_hash": ""
   },
   "src/app/[locale]/(app)/products/page.tsx": {
@@ -70,8 +70,8 @@
     "semantic_hash": "bc14d28d65723588c98726a412a3a7ed"
   },
   "src/app/[locale]/layout.tsx": {
-    "mtime": 1783434061.2563682,
-    "ast_hash": "23128d0c2f916aa390995827768fa259",
+    "mtime": 1783621209.8514073,
+    "ast_hash": "128937a17414187b6e15f64e80cc6ce7",
     "semantic_hash": ""
   },
   "src/app/[locale]/login/page.tsx": {
@@ -80,8 +80,8 @@
     "semantic_hash": ""
   },
   "src/app/[locale]/page.tsx": {
-    "mtime": 1783544607.369666,
-    "ast_hash": "5801035f0f3a6715da548d8bb20e6cf6",
+    "mtime": 1783616162.4138258,
+    "ast_hash": "76402900ad3c499846822731decb1c6a",
     "semantic_hash": ""
   },
   "src/app/[locale]/signup/page.tsx": {
@@ -185,8 +185,8 @@
     "semantic_hash": "54cb64fb251f51dbb213ccd6d3e2f182"
   },
   "src/lib/types.ts": {
-    "mtime": 1783096542.2803526,
-    "ast_hash": "f3c3861fe2b29e3aadf276ff4266e100",
+    "mtime": 1783616115.69939,
+    "ast_hash": "8c92d83b97b8c2e83fb5ca8387be4a96",
     "semantic_hash": ""
   },
   "src/lib/use-debounce.ts": {
@@ -195,13 +195,13 @@
     "semantic_hash": "0e21001f8d180f6f809f1d1b8a519146"
   },
   "src/messages/en.json": {
-    "mtime": 1783546856.876787,
-    "ast_hash": "095027d515125a835dc76bccd4cbb193",
+    "mtime": 1783616180.924693,
+    "ast_hash": "925816ea8e7a772687e695e1094821b1",
     "semantic_hash": ""
   },
   "src/messages/es.json": {
-    "mtime": 1783546855.2561762,
-    "ast_hash": "df4bd63f687c9bd75272155d538a0d32",
+    "mtime": 1783616180.924693,
+    "ast_hash": "f8a55d80075e40bca82e0c6cb2f0e9d1",
     "semantic_hash": ""
   },
   "src/middleware.ts": {
@@ -230,13 +230,13 @@
     "semantic_hash": ""
   },
   "src/app/[locale]/(app)/tracked/[id]/page.tsx": {
-    "mtime": 1783089318.0083637,
-    "ast_hash": "0a84e4da443e0f666d5b8ffc5f877b12",
+    "mtime": 1783616141.5071437,
+    "ast_hash": "02b89ad81fc067d79572f42a060f854b",
     "semantic_hash": ""
   },
   "src/app/[locale]/(app)/tracked/page.tsx": {
-    "mtime": 1783019587.2593882,
-    "ast_hash": "d554e91d9b8fa485f4fc0e7dd62a52a1",
+    "mtime": 1783615759.2101936,
+    "ast_hash": "8490282e151750667f8b4b11ae2a4dde",
     "semantic_hash": ""
   },
   "src/components/app/history-chart.tsx": {
@@ -310,13 +310,13 @@
     "semantic_hash": ""
   },
   "public/acuanto-logo-dark.png": {
-    "mtime": 1783434618.6983585,
-    "ast_hash": "af8cccdc26f299ce6e72dff65483be51",
+    "mtime": 1783621182.7080858,
+    "ast_hash": "5914b4f4d80510f37562c609251e65cc",
     "semantic_hash": ""
   },
   "public/acuanto-logo.png": {
-    "mtime": 1783434264.9473305,
-    "ast_hash": "032424533a19c56c68c07822cd7e3748",
+    "mtime": 1783621182.6884794,
+    "ast_hash": "0ffcfc7a161cbe3ab5ab413b73df4e14",
     "semantic_hash": ""
   },
   "src/components/admin/db-diagram.tsx": {
@@ -347,6 +347,31 @@
   "src/app/[locale]/(app)/documentation/page.tsx": {
     "mtime": 1783546814.97366,
     "ast_hash": "9902be7dce11070a6204cd56b9e37a6c",
+    "semantic_hash": ""
+  },
+  "public/android-chrome-192x192.png": {
+    "mtime": 1783621182.806117,
+    "ast_hash": "85e730a69829a952d64cc5cc546f3770",
+    "semantic_hash": ""
+  },
+  "public/android-chrome-512x512.png": {
+    "mtime": 1783621182.8257234,
+    "ast_hash": "d6b203f201015f9c6b8c9592e87cb896",
+    "semantic_hash": ""
+  },
+  "public/apple-touch-icon.png": {
+    "mtime": 1783621182.7865107,
+    "ast_hash": "8887042e90383c0149e5f869af6b7a8f",
+    "semantic_hash": ""
+  },
+  "public/favicon-16x16.png": {
+    "mtime": 1783621182.7571015,
+    "ast_hash": "6c2c3a5ed246a3268e3689609718ecc4",
+    "semantic_hash": ""
+  },
+  "public/favicon-32x32.png": {
+    "mtime": 1783621182.7767076,
+    "ast_hash": "0e2d003ef356a4deecf4eedc848cfbd0",
     "semantic_hash": ""
   }
 }

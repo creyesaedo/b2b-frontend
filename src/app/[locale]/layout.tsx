@@ -19,6 +19,15 @@ export const metadata: Metadata = {
   title: 'acuanto — Market intelligence for e-commerce',
   description:
     'Price trends, best-seller rankings, discounts and sellers for e-commerce markets, in a clear analytics dashboard.',
+  manifest: '/site.webmanifest',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon-16x16.png', type: 'image/png', sizes: '16x16' },
+      { url: '/favicon-32x32.png', type: 'image/png', sizes: '32x32' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180' }],
+  },
 };
 
 export function generateStaticParams() {
