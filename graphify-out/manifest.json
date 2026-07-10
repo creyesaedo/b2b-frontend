@@ -90,8 +90,8 @@
     "semantic_hash": ""
   },
   "src/components/app/app-shell.tsx": {
-    "mtime": 1783546838.2645328,
-    "ast_hash": "c55098c4e9fd157e1a90516d019fa958",
+    "mtime": 1783690535.421679,
+    "ast_hash": "c11f9f5745b55082a6ee4198f04ecce2",
     "semantic_hash": ""
   },
   "src/components/app/auth-guard.tsx": {
@@ -115,8 +115,8 @@
     "semantic_hash": ""
   },
   "src/components/brand.tsx": {
-    "mtime": 1783448012.9955914,
-    "ast_hash": "5318ebf316ef386023fbb793fda55e6f",
+    "mtime": 1783696201.0962083,
+    "ast_hash": "d691f184e88cbef494f1a43728e60f6d",
     "semantic_hash": ""
   },
   "src/components/dashboard/market-map.tsx": {
@@ -310,13 +310,13 @@
     "semantic_hash": ""
   },
   "public/acuanto-logo-dark.png": {
-    "mtime": 1783621182.7080858,
-    "ast_hash": "5914b4f4d80510f37562c609251e65cc",
+    "mtime": 1783694368.8265834,
+    "ast_hash": "2225b6e01c84edfd70cf13145a573888",
     "semantic_hash": ""
   },
   "public/acuanto-logo.png": {
-    "mtime": 1783621182.6884794,
-    "ast_hash": "0ffcfc7a161cbe3ab5ab413b73df4e14",
+    "mtime": 1783694368.8470376,
+    "ast_hash": "272704e3c9ceb7df587d60235b2a5299",
     "semantic_hash": ""
   },
   "src/components/admin/db-diagram.tsx": {

@@ -14,7 +14,7 @@ export function Brand({ className = '' }: { className?: string }) {
         width={700}
         height={700}
         priority
-        className="h-[1.4em] w-auto -translate-y-[0.14em] dark:hidden"
+        className="h-[1.02em] w-auto dark:hidden"
       />
       <Image
         src="/acuanto-logo-dark.png"
@@ -22,7 +22,7 @@ export function Brand({ className = '' }: { className?: string }) {
         width={700}
         height={700}
         priority
-        className="hidden h-[1.4em] w-auto -translate-y-[0.14em] dark:block"
+        className="hidden h-[1.02em] w-auto dark:block"
       />
       <span aria-hidden="true" className="ml-[0.03em] lowercase leading-none tracking-tight">
         cuanto
