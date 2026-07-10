@@ -47,7 +47,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Sidebar */}
       <aside className="hidden w-60 flex-col border-r border-gray-200 bg-white p-4 md:flex dark:border-gray-800 dark:bg-gray-900">
         <Link href="/dashboard" className="px-2 py-1">
-          <Brand />
+          <Brand className="text-2xl" />
         </Link>
         <nav className="mt-6 flex-1 space-y-1">
           {navItems.map((item) => {
