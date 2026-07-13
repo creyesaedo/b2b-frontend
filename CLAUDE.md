@@ -51,10 +51,18 @@ Env: copy `.env.example` → `.env.local` (`NEXT_PUBLIC_BFF_URL=http://localhost
 - **Data layer** — `src/lib/api/client.ts` (fetch wrapper, `credentials:'include'`,
   `ApiError`) + `src/lib/api/endpoints.ts` (typed calls). Types mirror the BFF
   contract in `src/lib/types.ts` — keep in sync with the BFF/ml-service.
+- **Analytics (dashboard-engine)** — `src/lib/engine/` mirrors the engine's
+  contracts (`types.ts`), calls its BFF routes (`api.ts`) and formats cells from
+  the ResultSet column metadata (`format.ts`; percent metrics are FRACTIONS).
+  `src/components/analytics/` is the widget runtime: `widget-renderer.tsx`
+  dispatches per widget type (kpi/line/bars/table/ranking/map/insight_card) onto
+  the engine's 12-column grid (layout x/y/w/h, explicit placement on md+).
+  `insight_card` widgets are fed by `POST /v1/ml/insights`, not a ResultSet.
 - **Routing** —
   - `app/[locale]/page.tsx` — landing (public, server component).
   - `app/[locale]/{login,signup}` — auth (shared `AuthForm`).
-  - `app/[locale]/(app)/*` — gated product: `dashboard`, `products`,
+  - `app/[locale]/(app)/*` — gated product: `dashboard`, `analytics` (templated
+    dashboards resolved by the dashboard-engine), `products`,
     `products/[catalogId]` (history charts), `categories`, `sellers`. The `(app)`
     layout wraps them in `AuthGuard` + `AppShell`.
 
@@ -65,6 +73,10 @@ Env: copy `.env.example` → `.env.local` (`NEXT_PUBLIC_BFF_URL=http://localhost
 `{data, meta}`) · `GET /v1/ml/products/catalog` · `GET /v1/ml/products/history`
 (`?catalog_id|ml_public_id`) · `GET /v1/ml/categories`. Many product fields are
 nullable — components must handle `null`.
+
+Analytics (dashboard-engine via the BFF): `GET /v1/ml/templates` ·
+`POST /v1/ml/templates/:id/instantiate` (`{params, resolve:true}` → spec +
+per-widget ResultSets) · `POST /v1/ml/insights` (`{scope}` → insight cards).
 
 ## Data dependency
 

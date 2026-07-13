@@ -26,6 +26,7 @@
     "features": "Características",
     "howItWorks": "Cómo funciona",
     "dashboard": "Dashboard",
+    "analytics": "Análisis",
     "products": "Productos",
     "tracked": "Productos seguidos",
     "categories": "Categorías",
@@ -34,6 +35,24 @@
     "admin": "Admin",
     "login": "Iniciar sesión",
     "getStarted": "Empezar gratis"
+  },
+  "analytics": {
+    "title": "Análisis de mercado",
+    "subtitle": "Dashboards prediseñados con insights automáticos sobre los snapshots semanales.",
+    "country": "País",
+    "category": "Categoría",
+    "window": "Ventana",
+    "window_last_4_weeks": "Últimas 4 semanas",
+    "window_last_8_weeks": "Últimas 8 semanas",
+    "window_last_12_weeks": "Últimas 12 semanas",
+    "window_last_26_weeks": "Últimas 26 semanas",
+    "selectCategory": "Elige una categoría…",
+    "missingParams": "Completa los parámetros para generar el dashboard.",
+    "dataAsOf": "Datos al {date}",
+    "noInsights": "Sin hallazgos relevantes esta semana.",
+    "detector_cambio_significativo": "Cambio significativo",
+    "detector_tendencia": "Tendencia",
+    "detector_concentracion": "Concentración"
   },
   "adminHome": {
     "title": "Administración",

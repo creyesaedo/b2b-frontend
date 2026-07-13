@@ -26,6 +26,7 @@
     "features": "Features",
     "howItWorks": "How it works",
     "dashboard": "Dashboard",
+    "analytics": "Analytics",
     "products": "Products",
     "tracked": "Tracked products",
     "categories": "Categories",
@@ -34,6 +35,24 @@
     "admin": "Admin",
     "login": "Log in",
     "getStarted": "Get started"
+  },
+  "analytics": {
+    "title": "Market analytics",
+    "subtitle": "Pre-built dashboards with automatic insights over the weekly snapshots.",
+    "country": "Country",
+    "category": "Category",
+    "window": "Window",
+    "window_last_4_weeks": "Last 4 weeks",
+    "window_last_8_weeks": "Last 8 weeks",
+    "window_last_12_weeks": "Last 12 weeks",
+    "window_last_26_weeks": "Last 26 weeks",
+    "selectCategory": "Pick a category…",
+    "missingParams": "Fill in the parameters to generate the dashboard.",
+    "dataAsOf": "Data as of {date}",
+    "noInsights": "No relevant findings this week.",
+    "detector_cambio_significativo": "Significant change",
+    "detector_tendencia": "Trend",
+    "detector_concentracion": "Concentration"
   },
   "adminHome": {
     "title": "Administration",
