@@ -49,6 +49,7 @@
     "selectCategory": "Pick a category…",
     "missingParams": "Fill in the parameters to generate the dashboard.",
     "dataAsOf": "Data as of {date}",
+    "resetLayout": "Reset layout",
     "noInsights": "No relevant findings this week.",
     "detector_cambio_significativo": "Significant change",
     "detector_tendencia": "Trend",

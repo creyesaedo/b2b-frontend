@@ -6,7 +6,9 @@ import type { QualityNote } from '@/lib/engine/types';
 /**
  * Shared chrome of every dashboard widget: title, optional quality notes and
  * the per-widget error state (a broken widget shows its error, never blanks
- * the dashboard — engine Doc 03 §4).
+ * the dashboard — engine Doc 03 §4). The header doubles as the drag handle
+ * (`.widget-drag-handle`, wired to DashboardCanvas's draggableHandle) so
+ * dragging never fights chart/table interactions in the body.
  */
 export function WidgetFrame({
   title,
@@ -21,7 +23,7 @@ export function WidgetFrame({
 }) {
   return (
     <div className="flex h-full min-h-0 flex-col rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-      <div className="mb-2 flex items-start justify-between gap-2">
+      <div className="widget-drag-handle mb-2 flex cursor-move select-none items-start justify-between gap-2 active:cursor-grabbing">
         <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200">{title}</h3>
         {quality.length > 0 && (
           <span

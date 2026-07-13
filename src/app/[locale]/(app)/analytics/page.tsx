@@ -1,12 +1,17 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
 import { SearchSelect, SearchSelectItem, Select, SelectItem } from '@tremor/react';
+import { RotateCcw } from 'lucide-react';
 import { PageHeader } from '@/components/app/page-header';
 import { DataState } from '@/components/app/data-state';
-import { DashboardGrid, WidgetRenderer } from '@/components/analytics/widget-renderer';
+import { WidgetRenderer } from '@/components/analytics/widget-renderer';
+import {
+  DashboardCanvas,
+  type LayoutOverrides,
+} from '@/components/analytics/dashboard-canvas';
 import { getInsights, instantiateTemplate, listEngineTemplates } from '@/lib/engine/api';
 import type { TemplateSummary } from '@/lib/engine/types';
 import { siteCurrency, type CellFormatOptions } from '@/lib/engine/format';
@@ -31,6 +36,23 @@ export default function AnalyticsPage() {
 
   const [templateId, setTemplateId] = useState('resumen_pais');
   const [overrides, setOverrides] = useState<Record<string, string>>({});
+
+  // User rearrangements of the widget grid, persisted per template.
+  const layoutKey = `analytics-layout:${templateId}`;
+  const [layoutOverrides, setLayoutOverrides] = useState<LayoutOverrides>({});
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(layoutKey);
+      setLayoutOverrides(stored ? (JSON.parse(stored) as LayoutOverrides) : {});
+    } catch {
+      setLayoutOverrides({});
+    }
+  }, [layoutKey]);
+  const saveLayout = (next: LayoutOverrides) => {
+    setLayoutOverrides(next);
+    if (Object.keys(next).length === 0) localStorage.removeItem(layoutKey);
+    else localStorage.setItem(layoutKey, JSON.stringify(next));
+  };
 
   const template = templates.find((tpl) => tpl.id === templateId);
 
@@ -169,11 +191,22 @@ export default function AnalyticsPage() {
             </div>
           )}
 
-          {snapshotWeek && (
-            <p className="ml-auto text-xs text-gray-400">
-              {t('dataAsOf', { date: formatDate(snapshotWeek, locale, { utc: true }) })}
-            </p>
-          )}
+          <div className="ml-auto flex items-center gap-3">
+            {Object.keys(layoutOverrides).length > 0 && (
+              <button
+                onClick={() => saveLayout({})}
+                className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-800"
+              >
+                <RotateCcw className="h-3 w-3" />
+                {t('resetLayout')}
+              </button>
+            )}
+            {snapshotWeek && (
+              <p className="text-xs text-gray-400">
+                {t('dataAsOf', { date: formatDate(snapshotWeek, locale, { utc: true }) })}
+              </p>
+            )}
+          </div>
         </div>
       )}
 
@@ -189,18 +222,20 @@ export default function AnalyticsPage() {
           onRetry={() => dashboardQuery.refetch()}
         >
           {spec && (
-            <DashboardGrid>
-              {spec.widgets.map((widget) => (
+            <DashboardCanvas
+              widgets={spec.widgets}
+              overrides={layoutOverrides}
+              onOverridesChange={saveLayout}
+              renderWidget={(widget) => (
                 <WidgetRenderer
-                  key={widget.id}
                   widget={widget}
                   resolved={resolvedWidgets.find((w) => w.widgetId === widget.id)}
                   insights={insightsQuery.data?.insights ?? []}
                   insightsLoading={hasInsights && insightsQuery.isLoading}
                   fmt={fmt}
                 />
-              ))}
-            </DashboardGrid>
+              )}
+            />
           )}
         </DataState>
       )}

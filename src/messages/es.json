@@ -49,6 +49,7 @@
     "selectCategory": "Elige una categoría…",
     "missingParams": "Completa los parámetros para generar el dashboard.",
     "dataAsOf": "Datos al {date}",
+    "resetLayout": "Restaurar diseño",
     "noInsights": "Sin hallazgos relevantes esta semana.",
     "detector_cambio_significativo": "Cambio significativo",
     "detector_tendencia": "Tendencia",
