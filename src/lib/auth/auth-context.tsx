@@ -10,7 +10,7 @@ import {
 } from 'react';
 import { ApiError } from '../api/client';
 import * as api from '../api/endpoints';
-import type { AuthUser } from '../types';
+import type { AuthUser, UserPreferences } from '../types';
 
 interface AuthContextValue {
   user: AuthUser | null;
@@ -19,6 +19,8 @@ interface AuthContextValue {
   register: (email: string, password: string, name?: string) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
+  /** Persists a preferences patch and updates the in-memory user. */
+  updatePreferences: (patch: Partial<UserPreferences>) => Promise<void>;
   hasPermission: (key: string) => boolean;
 }
 
@@ -68,6 +70,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  const updatePreferences = useCallback(async (patch: Partial<UserPreferences>) => {
+    setUser(await api.updatePreferences(patch));
+  }, []);
+
   const hasPermission = useCallback(
     (key: string) => user?.permissions.includes(key) ?? false,
     [user],
@@ -75,7 +81,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, register, logout, refresh, hasPermission }}
+      value={{
+        user,
+        loading,
+        login,
+        register,
+        logout,
+        refresh,
+        updatePreferences,
+        hasPermission,
+      }}
     >
       {children}
     </AuthContext.Provider>

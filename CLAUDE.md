@@ -55,9 +55,14 @@ Env: copy `.env.example` → `.env.local` (`NEXT_PUBLIC_BFF_URL=http://localhost
   contracts (`types.ts`), calls its BFF routes (`api.ts`) and formats cells from
   the ResultSet column metadata (`format.ts`; percent metrics are FRACTIONS).
   `src/components/analytics/` is the widget runtime: `widget-renderer.tsx`
-  dispatches per widget type (kpi/line/bars/table/ranking/map/insight_card) onto
-  the engine's 12-column grid (layout x/y/w/h, explicit placement on md+).
-  `insight_card` widgets are fed by `POST /v1/ml/insights`, not a ResultSet.
+  dispatches per widget type (kpi/line/bars/table/ranking/map/insight_card);
+  `dashboard-canvas.tsx` places widgets on the engine's 12-column grid with
+  **react-grid-layout v2** (the whole frame is the drag handle
+  `.widget-drag-handle`; scrollable bodies opt out via `.widget-no-drag`; resize
+  by the SE corner; stacked+static under 768px). User rearrangements persist in
+  localStorage (`analytics-layout:<templateId>`, only diffs vs the template) —
+  the "reset layout" button clears them. `insight_card` widgets are fed by
+  `POST /v1/ml/insights`, not a ResultSet.
 - **Routing** —
   - `app/[locale]/page.tsx` — landing (public, server component).
   - `app/[locale]/{login,signup}` — auth (shared `AuthForm`).

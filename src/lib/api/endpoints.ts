@@ -18,6 +18,7 @@ import type {
   ProductListParams,
   ProductOverrideInput,
   Role,
+  UserPreferences,
   Stats,
   SubcategoryCandidate,
   TrackedProduct,
@@ -73,6 +74,13 @@ export const register = (email: string, password: string, name?: string) =>
   });
 
 export const logout = () => apiFetch<void>('/auth/logout', { method: 'POST' });
+
+/** Shallow-merges a patch into the current user's stored UI preferences. */
+export const updatePreferences = (patch: Partial<UserPreferences>) =>
+  apiFetch<AuthUser>('/auth/me/preferences', {
+    method: 'PATCH',
+    body: JSON.stringify({ patch }),
+  });
 
 /** Full-page navigation target that starts the Google OAuth dance on the BFF. */
 export const googleLoginUrl = () => `${BFF_URL}/auth/google`;

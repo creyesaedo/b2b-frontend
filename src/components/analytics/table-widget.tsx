@@ -21,7 +21,7 @@ export function TableWidget({
   }
 
   return (
-    <div className="h-full overflow-auto">
+    <div className="widget-no-drag h-full cursor-auto overflow-auto">
       <table className="w-full text-left text-sm">
         <thead className="sticky top-0 bg-white text-xs text-gray-500 dark:bg-gray-900 dark:text-gray-400">
           <tr>

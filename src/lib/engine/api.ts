@@ -3,11 +3,13 @@
 // sent from here beyond the session cookie (apiFetch).
 import { apiFetch } from '../api/client';
 import type {
+  DashboardSpec,
   InsightsResponse,
   InstantiateResponse,
   ResolvedWidget,
   ResultSet,
   TemplateSummary,
+  WidgetSpec,
 } from './types';
 
 const PROVIDER = 'ml';
@@ -54,6 +56,28 @@ export const instantiateTemplate = async (
     { method: 'POST', body: JSON.stringify({ params, resolve: true }) },
   );
   return { ...res, widgets: normalizeWidgets(res.widgets) };
+};
+
+/**
+ * Resolves a single (user-added) widget against the dashboard's global filters.
+ * Mirrors the engine's `POST /widgets/resolve`; the BFF injects the identity
+ * context. Shaped into a ResolvedWidget so the runtime treats added widgets
+ * exactly like template ones.
+ */
+export const resolveWidget = async (
+  widget: WidgetSpec,
+  globalFilters: DashboardSpec['globalFilters'],
+): Promise<ResolvedWidget> => {
+  const res = await apiFetch<{ widgetId: string; type: string; resultSet: ResultSet }>(
+    `/v1/${PROVIDER}/widgets/resolve`,
+    { method: 'POST', body: JSON.stringify({ widget, globalFilters }) },
+  );
+  return {
+    widgetId: res.widgetId,
+    type: res.type,
+    resultSet: res.resultSet ? normalizeResultSet(res.resultSet) : null,
+    error: null,
+  };
 };
 
 /** Deterministic insight cards for a scope (feeds insight_card widgets). */

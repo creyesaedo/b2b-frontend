@@ -8,6 +8,15 @@ export interface AuthUser {
   avatarUrl: string | null;
   role: string;
   permissions: string[];
+  /** Free-form per-user UI preferences (onboarding flags, etc.). */
+  preferences: UserPreferences;
+}
+
+/** Per-user UI preferences the frontend owns. All fields optional. */
+export interface UserPreferences {
+  /** Set once the user has completed/dismissed the analytics tutorial. */
+  seenAnalyticsTutorial?: boolean;
+  [key: string]: unknown;
 }
 
 export interface ProductCategoryRef {

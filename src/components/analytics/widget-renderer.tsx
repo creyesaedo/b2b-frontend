@@ -21,18 +21,25 @@ export function WidgetRenderer({
   insights,
   insightsLoading,
   fmt,
+  onRemove,
+  removeLabel,
 }: {
   widget: WidgetSpec;
   resolved?: ResolvedWidget;
   insights: Insight[];
   insightsLoading: boolean;
   fmt: CellFormatOptions;
+  /** Present for user-added widgets: removes the widget from the dashboard. */
+  onRemove?: () => void;
+  removeLabel?: string;
 }) {
   return (
     <WidgetFrame
       title={widget.title}
       error={resolved?.error}
       quality={resolved?.resultSet?.quality}
+      onRemove={onRemove}
+      removeLabel={removeLabel}
     >
       <WidgetBody
         widget={widget}

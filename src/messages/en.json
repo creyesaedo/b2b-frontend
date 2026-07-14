@@ -53,7 +53,34 @@
     "noInsights": "No relevant findings this week.",
     "detector_cambio_significativo": "Significant change",
     "detector_tendencia": "Trend",
-    "detector_concentracion": "Concentration"
+    "detector_concentracion": "Concentration",
+    "addWidget": "Add widget",
+    "addWidgetTitle": "Add a widget",
+    "addWidgetSubtitle": "Pick a widget to add to this view. You can then drag it and place it wherever you want.",
+    "removeWidget": "Remove widget",
+    "close": "Close",
+    "presets": {
+      "precio_promedio_kpi": { "label": "Average price", "desc": "KPI with week-over-week change" },
+      "ventas_kpi": { "label": "Incremental sales", "desc": "This week's sales KPI with its change" },
+      "productos_kpi": { "label": "Products in the top", "desc": "Product count with its change" },
+      "oficiales_kpi": { "label": "Official stores", "desc": "Official-store share" },
+      "evolucion_precio_line": { "label": "Price trend", "desc": "Average price time series" },
+      "evolucion_ventas_line": { "label": "Sales trend", "desc": "Incremental sales time series" },
+      "top_categorias_ranking": { "label": "Top categories", "desc": "Ranking by weekly growth" },
+      "top_marcas_ranking": { "label": "Top brands", "desc": "Brands ranked by product count" },
+      "top_vendedores_ranking": { "label": "Top sellers", "desc": "Sellers ranked by sales" },
+      "mapa_precio": { "label": "Price map", "desc": "Average price per country (USD)" }
+    },
+    "tutorial": {
+      "title": "Build your own view",
+      "add": { "title": "Add widgets", "body": "Use the “Add widget” button to bring the KPIs, charts and rankings you care about into this view." },
+      "reorder": { "title": "Reorder them", "body": "Drag any widget by its header to move it, and use the bottom-right corner to resize it." },
+      "arrange": { "title": "Your way", "body": "Your layout is saved automatically for each dashboard. Use “Reset layout” to go back to the original anytime." },
+      "skip": "Skip",
+      "back": "Back",
+      "next": "Next",
+      "done": "Got it"
+    }
   },
   "adminHome": {
     "title": "Administration",

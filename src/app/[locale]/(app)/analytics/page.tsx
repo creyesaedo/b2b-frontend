@@ -2,18 +2,30 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { useQuery } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import { SearchSelect, SearchSelectItem, Select, SelectItem } from '@tremor/react';
-import { RotateCcw } from 'lucide-react';
+import { Plus, RotateCcw } from 'lucide-react';
 import { PageHeader } from '@/components/app/page-header';
 import { DataState } from '@/components/app/data-state';
 import { WidgetRenderer } from '@/components/analytics/widget-renderer';
+import { AddWidgetDialog } from '@/components/analytics/add-widget-dialog';
+import { AnalyticsTutorial } from '@/components/analytics/analytics-tutorial';
 import {
   DashboardCanvas,
   type LayoutOverrides,
 } from '@/components/analytics/dashboard-canvas';
-import { getInsights, instantiateTemplate, listEngineTemplates } from '@/lib/engine/api';
-import type { TemplateSummary } from '@/lib/engine/types';
+import {
+  getInsights,
+  instantiateTemplate,
+  listEngineTemplates,
+  resolveWidget,
+} from '@/lib/engine/api';
+import type { ResolvedWidget, TemplateSummary, WidgetSpec } from '@/lib/engine/types';
+import {
+  buildAddedWidget,
+  isAddedWidget,
+  type WidgetPreset,
+} from '@/lib/engine/widget-presets';
 import { siteCurrency, type CellFormatOptions } from '@/lib/engine/format';
 import { getCategories } from '@/lib/api/endpoints';
 import { siteName } from '@/lib/ml-sites';
@@ -52,6 +64,24 @@ export default function AnalyticsPage() {
     setLayoutOverrides(next);
     if (Object.keys(next).length === 0) localStorage.removeItem(layoutKey);
     else localStorage.setItem(layoutKey, JSON.stringify(next));
+  };
+
+  // Widgets the user added on top of the template, persisted per template.
+  const widgetsKey = `analytics-widgets:${templateId}`;
+  const [addedWidgets, setAddedWidgets] = useState<WidgetSpec[]>([]);
+  const [addOpen, setAddOpen] = useState(false);
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(widgetsKey);
+      setAddedWidgets(stored ? (JSON.parse(stored) as WidgetSpec[]) : []);
+    } catch {
+      setAddedWidgets([]);
+    }
+  }, [widgetsKey]);
+  const persistWidgets = (next: WidgetSpec[]) => {
+    setAddedWidgets(next);
+    if (next.length === 0) localStorage.removeItem(widgetsKey);
+    else localStorage.setItem(widgetsKey, JSON.stringify(next));
   };
 
   const template = templates.find((tpl) => tpl.id === templateId);
@@ -105,6 +135,49 @@ export default function AnalyticsPage() {
   const snapshotWeek =
     resolvedWidgets.find((w) => w.resultSet?.meta.snapshotWeek)?.resultSet?.meta
       .snapshotWeek ?? null;
+
+  // Added widgets resolve one-by-one against the dashboard's global filters, so
+  // they behave exactly like template widgets (data + per-widget error).
+  const globalFilters = spec?.globalFilters ?? [];
+  const addedResults = useQueries({
+    queries: addedWidgets.map((w) => ({
+      queryKey: ['engine-widget', templateId, params, w.id],
+      queryFn: () => resolveWidget(w, globalFilters),
+      enabled: ready && !!spec,
+      staleTime: 5 * 60_000,
+    })),
+  });
+  const addedResolved: ResolvedWidget[] = addedWidgets.map((w, i) => {
+    const r = addedResults[i];
+    if (r?.data) return r.data;
+    return {
+      widgetId: w.id,
+      type: w.type,
+      resultSet: null,
+      error: r?.error ? (r.error as Error).message : null,
+    };
+  });
+
+  const allWidgets = spec ? [...spec.widgets, ...addedWidgets] : [];
+  const allResolved = [...resolvedWidgets, ...addedResolved];
+
+  const addWidget = (preset: WidgetPreset) => {
+    const bottomY = allWidgets.reduce((max, w) => {
+      const lay = layoutOverrides[w.id] ?? w.layout;
+      return Math.max(max, lay.y + lay.h);
+    }, 0);
+    const widget = buildAddedWidget(preset, t(`presets.${preset.id}.label`), bottomY);
+    persistWidgets([...addedWidgets, widget]);
+    setAddOpen(false);
+  };
+  const removeWidget = (id: string) => {
+    persistWidgets(addedWidgets.filter((w) => w.id !== id));
+    if (layoutOverrides[id]) {
+      const next = { ...layoutOverrides };
+      delete next[id];
+      saveLayout(next);
+    }
+  };
 
   const setParam = (name: string, value: string) => {
     setOverrides((prev) => ({ ...prev, [name]: value }));
@@ -192,6 +265,14 @@ export default function AnalyticsPage() {
           )}
 
           <div className="ml-auto flex items-center gap-3">
+            <button
+              data-tour="add-widget"
+              onClick={() => setAddOpen(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-blue-600 bg-blue-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-blue-700 dark:border-blue-500 dark:bg-blue-600 dark:hover:bg-blue-500"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              {t('addWidget')}
+            </button>
             {Object.keys(layoutOverrides).length > 0 && (
               <button
                 onClick={() => saveLayout({})}
@@ -223,22 +304,29 @@ export default function AnalyticsPage() {
         >
           {spec && (
             <DashboardCanvas
-              widgets={spec.widgets}
+              widgets={allWidgets}
               overrides={layoutOverrides}
               onOverridesChange={saveLayout}
               renderWidget={(widget) => (
                 <WidgetRenderer
                   widget={widget}
-                  resolved={resolvedWidgets.find((w) => w.widgetId === widget.id)}
+                  resolved={allResolved.find((w) => w.widgetId === widget.id)}
                   insights={insightsQuery.data?.insights ?? []}
                   insightsLoading={hasInsights && insightsQuery.isLoading}
                   fmt={fmt}
+                  onRemove={
+                    isAddedWidget(widget.id) ? () => removeWidget(widget.id) : undefined
+                  }
+                  removeLabel={t('removeWidget')}
                 />
               )}
             />
           )}
         </DataState>
       )}
+
+      <AddWidgetDialog open={addOpen} onClose={() => setAddOpen(false)} onAdd={addWidget} />
+      <AnalyticsTutorial />
     </div>
   );
 }

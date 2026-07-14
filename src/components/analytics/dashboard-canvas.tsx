@@ -17,9 +17,10 @@ const MARGIN: [number, number] = [16, 16];
 export type LayoutOverrides = Record<string, WidgetLayout>;
 
 /**
- * Draggable/resizable dashboard canvas (react-grid-layout v2). Widgets drag by
- * their title bar (`.widget-drag-handle`) and resize by the SE corner handle.
- * On phones (<768px) everything stacks in one column and editing is off.
+ * Draggable/resizable dashboard canvas (react-grid-layout v2). Widgets drag
+ * from anywhere on their frame (`.widget-drag-handle`, minus `.widget-no-drag`
+ * scroll areas) and resize by the SE corner handle. On phones (<768px)
+ * everything stacks in one column and editing is off.
  *
  * `overrides` are the user's rearrangements on top of the template layout;
  * `onOverridesChange` receives ONLY the widgets that differ from the template
@@ -86,7 +87,13 @@ export function DashboardCanvas({
           rowHeight={ROW_HEIGHT}
           margin={MARGIN}
           containerPadding={[0, 0]}
-          dragConfig={{ enabled: editable, handle: '.widget-drag-handle' }}
+          dragConfig={{
+            enabled: editable,
+            handle: '.widget-drag-handle',
+            // Scrollable widget bodies opt out: dragging their scrollbar must
+            // scroll, not move the widget.
+            cancel: '.widget-no-drag',
+          }}
           resizeConfig={{ enabled: editable }}
           onBreakpointChange={(bp) => setEditable(bp === 'lg')}
           onLayoutChange={handleChange}

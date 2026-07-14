@@ -36,7 +36,7 @@ export function InsightsWidget({
   }
 
   return (
-    <ul className="flex h-full flex-col gap-2 overflow-auto">
+    <ul className="widget-no-drag flex h-full cursor-auto flex-col gap-2 overflow-auto">
       {insights.map((insight) => {
         const Icon = DETECTOR_ICONS[insight.detector] ?? Lightbulb;
         return (

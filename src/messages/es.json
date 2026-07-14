@@ -53,7 +53,34 @@
     "noInsights": "Sin hallazgos relevantes esta semana.",
     "detector_cambio_significativo": "Cambio significativo",
     "detector_tendencia": "Tendencia",
-    "detector_concentracion": "Concentración"
+    "detector_concentracion": "Concentración",
+    "addWidget": "Agregar widget",
+    "addWidgetTitle": "Agregar un widget",
+    "addWidgetSubtitle": "Elige un widget para sumarlo a esta vista. Luego puedes arrastrarlo y reubicarlo donde quieras.",
+    "removeWidget": "Quitar widget",
+    "close": "Cerrar",
+    "presets": {
+      "precio_promedio_kpi": { "label": "Precio promedio", "desc": "KPI con la variación semana a semana" },
+      "ventas_kpi": { "label": "Ventas incrementales", "desc": "KPI de ventas de la semana con su variación" },
+      "productos_kpi": { "label": "Productos en el top", "desc": "Cantidad de productos con su variación" },
+      "oficiales_kpi": { "label": "Tiendas oficiales", "desc": "Participación de tiendas oficiales" },
+      "evolucion_precio_line": { "label": "Evolución del precio", "desc": "Serie temporal del precio promedio" },
+      "evolucion_ventas_line": { "label": "Evolución de ventas", "desc": "Serie temporal de ventas incrementales" },
+      "top_categorias_ranking": { "label": "Top categorías", "desc": "Ranking por crecimiento semanal" },
+      "top_marcas_ranking": { "label": "Top marcas", "desc": "Ranking de marcas por cantidad de productos" },
+      "top_vendedores_ranking": { "label": "Top vendedores", "desc": "Ranking de vendedores por ventas" },
+      "mapa_precio": { "label": "Mapa de precios", "desc": "Precio promedio por país (USD)" }
+    },
+    "tutorial": {
+      "title": "Arma tu propia vista",
+      "add": { "title": "Agrega widgets", "body": "Usa el botón «Agregar widget» para sumar los indicadores, gráficos y rankings que más te importan a esta vista." },
+      "reorder": { "title": "Reordénalos", "body": "Arrastra cualquier widget desde su encabezado para moverlo, y usa la esquina inferior derecha para cambiar su tamaño." },
+      "arrange": { "title": "A tu manera", "body": "Tu diseño se guarda automáticamente para cada dashboard. Usa «Restaurar diseño» para volver al original cuando quieras." },
+      "skip": "Saltar",
+      "back": "Atrás",
+      "next": "Siguiente",
+      "done": "Entendido"
+    }
   },
   "adminHome": {
     "title": "Administración",
