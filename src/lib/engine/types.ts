@@ -63,6 +63,8 @@ export type WidgetType =
   | 'bars'
   /** Part-to-whole; pie vs donut is `visualization.variant`, not a data contract. */
   | 'pie'
+  /** Relationship between two metrics, one point per category. */
+  | 'scatter'
   | 'table'
   | 'ranking'
   | 'map'

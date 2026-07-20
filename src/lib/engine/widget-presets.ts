@@ -233,8 +233,11 @@ export const isConfigurableWidget = (id: string): boolean =>
   id.startsWith(CHART_PREFIX) || id.startsWith(LEGACY_LINE_PREFIX);
 
 /** Chart flavours the user can configure. Pie and donut share a data contract. */
-export const CHART_KINDS = ['line', 'bars', 'pie', 'donut'] as const;
+export const CHART_KINDS = ['line', 'bars', 'pie', 'donut', 'scatter'] as const;
 export type ChartKind = (typeof CHART_KINDS)[number];
+
+/** Points offered for a scatter — enough to see a cloud, few enough to query fast. */
+export const SCATTER_POINT_OPTIONS = [25, 50, 100, 200] as const;
 
 export const TIME_WINDOWS = [
   'last_4_weeks',
@@ -308,7 +311,7 @@ export const defaultChartConfig = (kind: ChartKind): ChartConfig => ({
   dimension: 'marca',
   granularity: 'semana',
   window: 'last_12_weeks',
-  topN: kind === 'bars' ? 10 : 5,
+  topN: kind === 'bars' ? 10 : kind === 'scatter' ? 50 : 5,
   dualAxis: false,
   title: '',
 });
@@ -318,6 +321,12 @@ export const isCategorical = (kind: ChartKind): boolean => kind !== 'line';
 /** True when only ONE metric is meaningful (part-to-whole). */
 export const isPartToWhole = (kind: ChartKind): boolean =>
   kind === 'pie' || kind === 'donut';
+/**
+ * True when metrics are ROLE-bound rather than a flat set: `metrics[0]` is the
+ * X axis, `[1]` the Y axis and an optional `[2]` sizes the bubble. Order
+ * matters here, unlike every other chart kind.
+ */
+export const isScatter = (kind: ChartKind): boolean => kind === 'scatter';
 
 /**
  * Builds (or rebuilds) a configurable chart's WidgetSpec. Passing an existing
@@ -353,6 +362,34 @@ export function buildChartWidget(
         time: { mode: 'series', range: config.window },
       },
       visualization: { kind: 'line', dualAxis: config.dualAxis },
+      layout,
+    };
+  }
+
+  if (config.kind === 'scatter') {
+    // X, Y and the optional size metric, in that order.
+    const metrics = config.metrics.slice(0, 3);
+    return {
+      id,
+      type: 'scatter',
+      title,
+      dataQuery: {
+        dimensions: [{ ref: config.dimension }],
+        metrics: metrics.map((ref) => ({ ref })),
+        filters: [],
+        // Ranked by the Y metric: the points kept are the ones that matter on
+        // the axis the user is reading.
+        aggregation: {
+          topN: {
+            n: config.topN,
+            by: metrics[1] ?? metrics[0],
+            direction: 'desc',
+            includeOthers: false,
+          },
+        },
+        time: { mode: 'latest' },
+      },
+      visualization: { kind: 'scatter' },
       layout,
     };
   }
@@ -404,7 +441,9 @@ export function readChartConfig(widget: WidgetSpec): ChartConfig {
         : 'donut'
       : widget.type === 'bars'
         ? 'bars'
-        : 'line';
+        : widget.type === 'scatter'
+          ? 'scatter'
+          : 'line';
 
   const base = defaultChartConfig(kind);
   const range = q.time?.range;

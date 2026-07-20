@@ -66,14 +66,21 @@
       "line": "Línea",
       "bars": "Barras",
       "pie": "Torta",
-      "donut": "Dona"
+      "donut": "Dona",
+      "scatter": "Dispersión"
     },
     "chartConfig": {
       "addTitle": "Agregar gráfico de {chart}",
       "editTitle": "Configurar gráfico de {chart}",
       "subtitleMulti": "Elige hasta {max} métricas. Puedes cambiarlas después con el botón de ajustes del widget.",
       "subtitlePart": "Elige una métrica para repartir en porciones. Solo se ofrecen totales: un promedio no se puede repartir en partes de un todo.",
+      "subtitleScatter": "Relaciona dos métricas: cada punto es una categoría, ubicada según su valor en cada eje. Útil para ver si dos indicadores se mueven juntos.",
       "metrics": "Datos a graficar",
+      "axis_0": "Eje X",
+      "axis_1": "Eje Y",
+      "axis_2": "Tamaño (opcional)",
+      "noSize": "Sin tamaño",
+      "points": "Cuántos puntos",
       "splitBy": "Separar por",
       "topN": "Cuántas categorías",
       "slices": "Cuántas porciones",

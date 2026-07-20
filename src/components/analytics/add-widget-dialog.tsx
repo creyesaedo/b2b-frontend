@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { BarChart3, ChartPie, LineChart, X } from 'lucide-react';
+import { BarChart3, ChartPie, ChartScatter, LineChart, X } from 'lucide-react';
 import {
   CHART_KINDS,
   WIDGET_PRESETS,
@@ -16,6 +16,7 @@ const CHART_ICONS: Record<ChartKind, typeof LineChart> = {
   bars: BarChart3,
   pie: ChartPie,
   donut: ChartPie,
+  scatter: ChartScatter,
 };
 
 /**

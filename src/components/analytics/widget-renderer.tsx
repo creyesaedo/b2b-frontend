@@ -10,6 +10,7 @@ import { RankingWidget } from './ranking-widget';
 import { TableWidget } from './table-widget';
 import { MapWidget } from './map-widget';
 import { PieWidget } from './pie-widget';
+import { ScatterWidget } from './scatter-widget';
 import { InsightsWidget } from './insights-widget';
 
 /**
@@ -91,6 +92,8 @@ function WidgetBody({
       return <BarsWidget resultSet={resultSet} fmt={fmt} />;
     case 'pie':
       return <PieWidget resultSet={resultSet} visualization={widget.visualization} fmt={fmt} />;
+    case 'scatter':
+      return <ScatterWidget resultSet={resultSet} fmt={fmt} />;
     case 'ranking':
       return <RankingWidget resultSet={resultSet} visualization={widget.visualization} fmt={fmt} />;
     case 'table':

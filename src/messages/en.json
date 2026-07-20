@@ -66,14 +66,21 @@
       "line": "Line",
       "bars": "Bars",
       "pie": "Pie",
-      "donut": "Donut"
+      "donut": "Donut",
+      "scatter": "Scatter"
     },
     "chartConfig": {
       "addTitle": "Add {chart} chart",
       "editTitle": "Configure {chart} chart",
       "subtitleMulti": "Pick up to {max} metrics. You can change them later with the widget's settings button.",
       "subtitlePart": "Pick one metric to split into slices. Only totals are offered: an average cannot be split into parts of a whole.",
+      "subtitleScatter": "Relate two metrics: each point is a category, placed by its value on each axis. Useful to see whether two indicators move together.",
       "metrics": "Data to plot",
+      "axis_0": "X axis",
+      "axis_1": "Y axis",
+      "axis_2": "Size (optional)",
+      "noSize": "No size",
+      "points": "How many points",
       "splitBy": "Split by",
       "topN": "How many categories",
       "slices": "How many slices",

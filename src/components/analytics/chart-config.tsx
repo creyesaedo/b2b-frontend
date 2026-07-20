@@ -12,9 +12,11 @@ import {
   MAX_CHART_METRICS,
   PART_TO_WHOLE_METRICS,
   PIE_SLICE_OPTIONS,
+  SCATTER_POINT_OPTIONS,
   TIME_WINDOWS,
   isCategorical,
   isPartToWhole,
+  isScatter,
   type ChartConfig,
   type Granularity,
   type TimeWindow,
@@ -59,6 +61,7 @@ export function ChartConfigDialog({
 
   const partToWhole = isPartToWhole(config.kind);
   const categorical = isCategorical(config.kind);
+  const scatter = isScatter(config.kind);
 
   // A pie slice must be a total that adds up to a whole — averages and ratios
   // are filtered out rather than silently producing a meaningless chart.
@@ -96,8 +99,23 @@ export function ChartConfigDialog({
     });
   };
 
-  const topOptions = partToWhole ? PIE_SLICE_OPTIONS : BAR_TOP_OPTIONS;
-  const canSave = config.metrics.length > 0;
+  /** Scatter binds metrics by ROLE: 0 = X, 1 = Y, 2 = bubble size (optional). */
+  const setMetricAt = (i: number, name: string) => {
+    setConfig((c) => {
+      const next = [...c.metrics];
+      if (!name) next.splice(i, 1);
+      else next[i] = name;
+      return { ...c, metrics: next.filter(Boolean) };
+    });
+  };
+
+  const topOptions = scatter
+    ? SCATTER_POINT_OPTIONS
+    : partToWhole
+      ? PIE_SLICE_OPTIONS
+      : BAR_TOP_OPTIONS;
+  // A scatter needs both axes before it means anything.
+  const canSave = scatter ? config.metrics.length >= 2 : config.metrics.length > 0;
 
   return (
     <div
@@ -127,21 +145,49 @@ export function ChartConfigDialog({
           </button>
         </div>
         <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
-          {partToWhole
-            ? t('chartConfig.subtitlePart')
-            : t('chartConfig.subtitleMulti', { max: MAX_CHART_METRICS })}
+          {scatter
+            ? t('chartConfig.subtitleScatter')
+            : partToWhole
+              ? t('chartConfig.subtitlePart')
+              : t('chartConfig.subtitleMulti', { max: MAX_CHART_METRICS })}
         </p>
 
         {/* Metrics */}
         <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
           {t('chartConfig.metrics')}
-          {!partToWhole && ` (${config.metrics.length}/${MAX_CHART_METRICS})`}
+          {!partToWhole && !scatter && ` (${config.metrics.length}/${MAX_CHART_METRICS})`}
         </label>
         <DataState
           isLoading={catalogQuery.isLoading}
           isError={catalogQuery.isError}
           onRetry={() => catalogQuery.refetch()}
         >
+          {scatter ? (
+            <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {([0, 1, 2] as const).map((slot) => (
+                <div key={slot}>
+                  <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
+                    {t(`chartConfig.axis_${slot}`)}
+                  </label>
+                  <select
+                    value={config.metrics[slot] ?? ''}
+                    onChange={(e) => setMetricAt(slot, e.target.value)}
+                    className="w-full rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-sm text-gray-800 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100"
+                  >
+                    {/* Only the size slot is optional. */}
+                    <option value="">
+                      {slot === 2 ? t('chartConfig.noSize') : '—'}
+                    </option>
+                    {metrics.map((m) => (
+                      <option key={m.name} value={m.name}>
+                        {m.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+            </div>
+          ) : (
           <div className="mb-4 grid max-h-48 grid-cols-1 gap-1.5 overflow-y-auto pr-1 sm:grid-cols-2">
             {metrics.map((m) => {
               const checked = config.metrics.includes(m.name);
@@ -182,9 +228,10 @@ export function ChartConfigDialog({
               );
             })}
           </div>
+          )}
         </DataState>
 
-        {/* Split: by category (bars/pie) or by time (line) */}
+        {/* Split: by category (bars/pie/scatter) or by time (line) */}
         <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {categorical ? (
             <>
@@ -206,7 +253,11 @@ export function ChartConfigDialog({
               </div>
               <div>
                 <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                  {partToWhole ? t('chartConfig.slices') : t('chartConfig.topN')}
+                  {scatter
+                    ? t('chartConfig.points')
+                    : partToWhole
+                      ? t('chartConfig.slices')
+                      : t('chartConfig.topN')}
                 </label>
                 <select
                   value={config.topN}
