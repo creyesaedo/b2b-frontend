@@ -60,11 +60,24 @@
     "removeWidget": "Quitar widget",
     "configureWidget": "Configurar datos",
     "close": "Cerrar",
-    "lineConfig": {
-      "title": "Gráfico de línea a tu medida",
-      "editTitle": "Configurar el gráfico",
-      "subtitle": "Elige hasta {max} métricas para graficar en el tiempo. Puedes cambiarlas después con el botón de ajustes del widget.",
+    "addWidgetCustomSection": "Gráficos a tu medida (eliges los datos)",
+    "addWidgetPresetSection": "Widgets listos para usar",
+    "chartKind": {
+      "line": "Línea",
+      "bars": "Barras",
+      "pie": "Torta",
+      "donut": "Dona"
+    },
+    "chartConfig": {
+      "addTitle": "Agregar gráfico de {chart}",
+      "editTitle": "Configurar gráfico de {chart}",
+      "subtitleMulti": "Elige hasta {max} métricas. Puedes cambiarlas después con el botón de ajustes del widget.",
+      "subtitlePart": "Elige una métrica para repartir en porciones. Solo se ofrecen totales: un promedio no se puede repartir en partes de un todo.",
       "metrics": "Datos a graficar",
+      "splitBy": "Separar por",
+      "topN": "Cuántas categorías",
+      "slices": "Cuántas porciones",
+      "othersHint": "El resto se agrupa en una porción «Otros», para que sumen el total.",
       "granularity": "Granularidad",
       "granularity_semana": "Por semana",
       "granularity_mes": "Por mes",
@@ -76,7 +89,6 @@
       "save": "Guardar cambios"
     },
     "presets": {
-      "custom_line": { "label": "Gráfico de línea a tu medida", "desc": "Tú eliges qué datos vincular y cómo verlos en el tiempo" },
       "precio_promedio_kpi": { "label": "Precio promedio", "desc": "KPI con la variación semana a semana" },
       "ventas_kpi": { "label": "Ventas incrementales", "desc": "KPI de ventas de la semana con su variación" },
       "productos_kpi": { "label": "Productos en el top", "desc": "Cantidad de productos con su variación" },

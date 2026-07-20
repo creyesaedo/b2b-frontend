@@ -60,11 +60,24 @@
     "removeWidget": "Remove widget",
     "configureWidget": "Configure data",
     "close": "Close",
-    "lineConfig": {
-      "title": "Custom line chart",
-      "editTitle": "Configure the chart",
-      "subtitle": "Pick up to {max} metrics to plot over time. You can change them later with the widget's settings button.",
+    "addWidgetCustomSection": "Custom charts (you pick the data)",
+    "addWidgetPresetSection": "Ready-made widgets",
+    "chartKind": {
+      "line": "Line",
+      "bars": "Bars",
+      "pie": "Pie",
+      "donut": "Donut"
+    },
+    "chartConfig": {
+      "addTitle": "Add {chart} chart",
+      "editTitle": "Configure {chart} chart",
+      "subtitleMulti": "Pick up to {max} metrics. You can change them later with the widget's settings button.",
+      "subtitlePart": "Pick one metric to split into slices. Only totals are offered: an average cannot be split into parts of a whole.",
       "metrics": "Data to plot",
+      "splitBy": "Split by",
+      "topN": "How many categories",
+      "slices": "How many slices",
+      "othersHint": "The rest is grouped into an “Otros” slice, so they add up to the total.",
       "granularity": "Granularity",
       "granularity_semana": "By week",
       "granularity_mes": "By month",
@@ -76,7 +89,6 @@
       "save": "Save changes"
     },
     "presets": {
-      "custom_line": { "label": "Custom line chart", "desc": "You choose which data to bind and how to see it over time" },
       "precio_promedio_kpi": { "label": "Average price", "desc": "KPI with week-over-week change" },
       "ventas_kpi": { "label": "Incremental sales", "desc": "This week's sales KPI with its change" },
       "productos_kpi": { "label": "Products in the top", "desc": "Product count with its change" },

@@ -2,8 +2,21 @@
 
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { LineChart, X } from 'lucide-react';
-import { WIDGET_PRESETS, type WidgetPreset } from '@/lib/engine/widget-presets';
+import { BarChart3, ChartPie, LineChart, X } from 'lucide-react';
+import {
+  CHART_KINDS,
+  WIDGET_PRESETS,
+  type ChartKind,
+  type WidgetPreset,
+} from '@/lib/engine/widget-presets';
+
+/** Icon per configurable chart flavour (donut reuses the pie glyph). */
+const CHART_ICONS: Record<ChartKind, typeof LineChart> = {
+  line: LineChart,
+  bars: BarChart3,
+  pie: ChartPie,
+  donut: ChartPie,
+};
 
 /**
  * Modal that lets the user pick a widget to add to the analytics dashboard.
@@ -18,12 +31,12 @@ export function AddWidgetDialog({
   open,
   onClose,
   onAdd,
-  onAddCustomLine,
+  onAddChart,
 }: {
   open: boolean;
   onClose: () => void;
   onAdd: (preset: WidgetPreset) => void;
-  onAddCustomLine: () => void;
+  onAddChart: (kind: ChartKind) => void;
 }) {
   const t = useTranslations('analytics');
 
@@ -66,23 +79,32 @@ export function AddWidgetDialog({
           {t('addWidgetSubtitle')}
         </p>
 
-        {/* Custom line chart — the only entry that asks for its data first. */}
-        <button
-          type="button"
-          onClick={onAddCustomLine}
-          className="mb-3 flex w-full items-start gap-3 rounded-xl border border-blue-200 bg-blue-50 p-3 text-left transition-colors hover:border-blue-500 dark:border-blue-900 dark:bg-blue-950/50 dark:hover:border-blue-500"
-        >
-          <LineChart className="mt-0.5 h-5 w-5 shrink-0 text-blue-600 dark:text-blue-300" />
-          <span className="min-w-0">
-            <span className="block text-sm font-medium text-gray-800 dark:text-gray-100">
-              {t('presets.custom_line.label')}
-            </span>
-            <span className="block text-xs text-gray-500 dark:text-gray-400">
-              {t('presets.custom_line.desc')}
-            </span>
-          </span>
-        </button>
+        {/* Configurable charts — these ask for their data before being added. */}
+        <p className="mb-1.5 text-xs font-medium text-gray-500 dark:text-gray-400">
+          {t('addWidgetCustomSection')}
+        </p>
+        <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {CHART_KINDS.map((kind) => {
+            const Icon = CHART_ICONS[kind];
+            return (
+              <button
+                key={kind}
+                type="button"
+                onClick={() => onAddChart(kind)}
+                className="flex flex-col items-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 p-3 text-center transition-colors hover:border-blue-500 dark:border-blue-900 dark:bg-blue-950/50 dark:hover:border-blue-500"
+              >
+                <Icon className="h-5 w-5 text-blue-600 dark:text-blue-300" />
+                <span className="text-xs font-medium text-gray-800 dark:text-gray-100">
+                  {t(`chartKind.${kind}`)}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
+        <p className="mb-1.5 text-xs font-medium text-gray-500 dark:text-gray-400">
+          {t('addWidgetPresetSection')}
+        </p>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {WIDGET_PRESETS.map((preset) => (
             <button

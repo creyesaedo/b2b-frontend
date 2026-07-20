@@ -218,13 +218,23 @@ export function buildAddedWidget(
 /** An added widget is one whose id carries the `added:` namespace. */
 export const isAddedWidget = (id: string): boolean => id.startsWith('added:');
 
-// ── Custom line chart (user binds its own data) ──────────────────────────────
 
-/** Ids of custom line widgets, so the frame can offer the "configure" control. */
-const CUSTOM_LINE_PREFIX = 'added:custom_line:';
+// ── Configurable charts (the user binds their own data) ──────────────────────
+
+/**
+ * Ids of configurable widgets. `added:chart:` is the current namespace;
+ * `added:custom_line:` is the original line-only one, still recognised so
+ * charts saved before this existed keep their settings button.
+ */
+const CHART_PREFIX = 'added:chart:';
+const LEGACY_LINE_PREFIX = 'added:custom_line:';
 
 export const isConfigurableWidget = (id: string): boolean =>
-  id.startsWith(CUSTOM_LINE_PREFIX);
+  id.startsWith(CHART_PREFIX) || id.startsWith(LEGACY_LINE_PREFIX);
+
+/** Chart flavours the user can configure. Pie and donut share a data contract. */
+export const CHART_KINDS = ['line', 'bars', 'pie', 'donut'] as const;
+export type ChartKind = (typeof CHART_KINDS)[number];
 
 export const TIME_WINDOWS = [
   'last_4_weeks',
@@ -238,74 +248,176 @@ export type TimeWindow = (typeof TIME_WINDOWS)[number];
 export const GRANULARITIES = ['semana', 'mes'] as const;
 export type Granularity = (typeof GRANULARITIES)[number];
 
-/** Max series on one chart — beyond this a line chart stops being readable. */
-export const MAX_LINE_METRICS = 4;
+/** Categorical dimensions worth splitting a chart by (from the semantic model). */
+export const CATEGORICAL_DIMENSIONS = [
+  'categoria',
+  'marca',
+  'vendedor',
+  'pais',
+  'tipo_envio',
+  'tienda_oficial',
+] as const;
 
-/** What the user binds to a custom line chart. */
-export interface LineWidgetConfig {
-  /** Semantic metric refs plotted as series (1..MAX_LINE_METRICS). */
+/** Max series on one chart — beyond this a line/bar chart stops being readable. */
+export const MAX_CHART_METRICS = 4;
+
+/**
+ * Slice counts offered for pie/donut. Capped low on purpose: a part-to-whole
+ * chart is only readable "at a glance" up to ~6 segments, and the remainder
+ * always becomes one extra "Otros" slice on top of this number.
+ */
+export const PIE_SLICE_OPTIONS = [4, 5, 6] as const;
+/** Bars tolerate far more categories than slices do. */
+export const BAR_TOP_OPTIONS = [5, 10, 15, 20] as const;
+
+/**
+ * Metrics that may be a pie slice: only totals/counts, whose parts genuinely
+ * sum to a whole. Averages, medians, ratios and growth are excluded — a pie of
+ * "average price by brand" adds up to nothing meaningful.
+ */
+export const PART_TO_WHOLE_METRICS = [
+  'productos',
+  'ventas_incrementales',
+  'ventas_acumuladas',
+  'visitas',
+  'reviews_totales',
+];
+
+/** What the user binds to a configurable chart. */
+export interface ChartConfig {
+  kind: ChartKind;
+  /** Semantic metric refs (1..MAX_CHART_METRICS; pie/donut take exactly 1). */
   metrics: string[];
-  window: TimeWindow;
+  /** Categorical dimension — bars/pie/donut only. */
+  dimension: string;
+  /** Time bucket — line only. */
   granularity: Granularity;
-  /** Second Y axis — useful when scales differ wildly (price vs. counts). */
+  /** Time range — line only. */
+  window: TimeWindow;
+  /** Categories kept — bars/pie/donut only. */
+  topN: number;
+  /** Second Y axis — line only. */
   dualAxis: boolean;
   /** User-provided title; falls back to the joined metric labels. */
   title: string;
 }
 
-export const DEFAULT_LINE_CONFIG: LineWidgetConfig = {
+export const defaultChartConfig = (kind: ChartKind): ChartConfig => ({
+  kind,
   metrics: [],
-  window: 'last_12_weeks',
+  dimension: 'marca',
   granularity: 'semana',
+  window: 'last_12_weeks',
+  topN: kind === 'bars' ? 10 : 5,
   dualAxis: false,
   title: '',
-};
+});
+
+/** True when this chart splits by a category instead of by time. */
+export const isCategorical = (kind: ChartKind): boolean => kind !== 'line';
+/** True when only ONE metric is meaningful (part-to-whole). */
+export const isPartToWhole = (kind: ChartKind): boolean =>
+  kind === 'pie' || kind === 'donut';
 
 /**
- * Builds (or rebuilds) a custom line WidgetSpec from a user config. Passing an
- * existing `id`/`layout` edits in place — the widget keeps its position and the
- * user only re-binds the data.
+ * Builds (or rebuilds) a configurable chart's WidgetSpec. Passing an existing
+ * `id`/`layout` edits in place — the widget keeps its position and the user
+ * only re-binds the data.
  */
-export function buildLineWidget(
-  config: LineWidgetConfig,
+export function buildChartWidget(
+  config: ChartConfig,
   fallbackTitle: string,
   placement: { id?: string; layout?: WidgetSpec['layout']; placeAtY?: number },
 ): WidgetSpec {
+  const title = config.title.trim() || fallbackTitle;
+  const id = placement.id ?? `${CHART_PREFIX}${config.kind}:${Date.now()}`;
+  const layout =
+    placement.layout ??
+    ({
+      x: 0,
+      y: placement.placeAtY ?? 0,
+      w: isPartToWhole(config.kind) ? 4 : 6,
+      h: isPartToWhole(config.kind) ? 4 : 3,
+    } as WidgetSpec['layout']);
+
+  if (config.kind === 'line') {
+    return {
+      id,
+      type: 'line',
+      title,
+      dataQuery: {
+        dimensions: [{ ref: config.granularity }],
+        metrics: config.metrics.map((ref) => ({ ref })),
+        filters: [],
+        aggregation: {},
+        time: { mode: 'series', range: config.window },
+      },
+      visualization: { kind: 'line', dualAxis: config.dualAxis },
+      layout,
+    };
+  }
+
+  const partToWhole = isPartToWhole(config.kind);
+  const metrics = partToWhole ? config.metrics.slice(0, 1) : config.metrics;
   return {
-    id: placement.id ?? `${CUSTOM_LINE_PREFIX}${Date.now()}`,
-    type: 'line',
-    title: config.title.trim() || fallbackTitle,
+    id,
+    type: partToWhole ? 'pie' : 'bars',
+    title,
     dataQuery: {
-      dimensions: [{ ref: config.granularity }],
-      metrics: config.metrics.map((ref) => ({ ref })),
+      dimensions: [{ ref: config.dimension }],
+      metrics: metrics.map((ref) => ({ ref })),
       filters: [],
-      aggregation: {},
-      time: { mode: 'series', range: config.window },
+      aggregation: {
+        topN: {
+          n: config.topN,
+          by: metrics[0],
+          direction: 'desc',
+          // Only a part-to-whole chart needs the remainder to close the total.
+          includeOthers: partToWhole,
+        },
+      },
+      time: { mode: 'latest' },
     },
-    visualization: { kind: 'line', dualAxis: config.dualAxis },
-    layout: placement.layout ?? { x: 0, y: placement.placeAtY ?? 0, w: 6, h: 3 },
+    visualization: partToWhole
+      ? { kind: 'pie', variant: config.kind === 'pie' ? 'pie' : 'donut' }
+      : { kind: 'bars' },
+    layout,
   };
 }
 
 /** Recovers the config from a built spec, so the edit dialog opens pre-filled. */
-export function readLineConfig(widget: WidgetSpec): LineWidgetConfig {
+export function readChartConfig(widget: WidgetSpec): ChartConfig {
   const q = (widget.dataQuery ?? {}) as {
     dimensions?: Array<{ ref: string }>;
     metrics?: Array<{ ref: string }>;
     time?: { range?: string };
+    aggregation?: { topN?: { n?: number } };
   };
-  const viz = widget.visualization as { dualAxis?: boolean };
-  const granularity = q.dimensions?.[0]?.ref;
+  const viz = (widget.visualization ?? {}) as { dualAxis?: boolean; variant?: string };
+  const dimRef = q.dimensions?.[0]?.ref ?? 'marca';
+  const isTime = (GRANULARITIES as readonly string[]).includes(dimRef);
+
+  const kind: ChartKind =
+    widget.type === 'pie'
+      ? viz.variant === 'pie'
+        ? 'pie'
+        : 'donut'
+      : widget.type === 'bars'
+        ? 'bars'
+        : 'line';
+
+  const base = defaultChartConfig(kind);
   const range = q.time?.range;
   return {
+    ...base,
     metrics: (q.metrics ?? []).map((m) => m.ref),
+    dimension: isTime ? base.dimension : dimRef,
+    granularity: isTime ? (dimRef as Granularity) : base.granularity,
     window: (TIME_WINDOWS as readonly string[]).includes(range ?? '')
       ? (range as TimeWindow)
-      : 'last_12_weeks',
-    granularity: (GRANULARITIES as readonly string[]).includes(granularity ?? '')
-      ? (granularity as Granularity)
-      : 'semana',
-    dualAxis: viz?.dualAxis === true,
+      : base.window,
+    topN: q.aggregation?.topN?.n ?? base.topN,
+    dualAxis: viz.dualAxis === true,
     title: widget.title ?? '',
   };
 }

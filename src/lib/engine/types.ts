@@ -61,6 +61,8 @@ export type WidgetType =
   | 'kpi'
   | 'line'
   | 'bars'
+  /** Part-to-whole; pie vs donut is `visualization.variant`, not a data contract. */
+  | 'pie'
   | 'table'
   | 'ranking'
   | 'map'

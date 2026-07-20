@@ -21,15 +21,16 @@ import {
   resolveWidget,
 } from '@/lib/engine/api';
 import type { ResolvedWidget, TemplateSummary, WidgetSpec } from '@/lib/engine/types';
-import { LineWidgetConfigDialog } from '@/components/analytics/line-widget-config';
+import { ChartConfigDialog } from '@/components/analytics/chart-config';
 import {
   buildAddedWidget,
-  buildLineWidget,
-  DEFAULT_LINE_CONFIG,
+  buildChartWidget,
+  defaultChartConfig,
   isAddedWidget,
   isConfigurableWidget,
-  readLineConfig,
-  type LineWidgetConfig,
+  readChartConfig,
+  type ChartConfig,
+  type ChartKind,
   type WidgetPreset,
 } from '@/lib/engine/widget-presets';
 import { siteCurrency, type CellFormatOptions } from '@/lib/engine/format';
@@ -77,10 +78,10 @@ export default function AnalyticsPage() {
   const [addedWidgets, setAddedWidgets] = useState<WidgetSpec[]>([]);
   const [addOpen, setAddOpen] = useState(false);
   // Open data-binding dialog: `add` creates a new line chart, `edit` re-binds one.
-  const [lineConfig, setLineConfig] = useState<{
+  const [chartConfig, setChartConfig] = useState<{
     mode: 'add' | 'edit';
     widgetId?: string;
-    initial: LineWidgetConfig;
+    initial: ChartConfig;
   } | null>(null);
   useEffect(() => {
     try {
@@ -185,21 +186,21 @@ export default function AnalyticsPage() {
       return Math.max(max, lay.y + lay.h);
     }, 0);
 
-  /** Saves the custom line chart — appends when adding, replaces when editing. */
-  const saveLineWidget = (config: LineWidgetConfig) => {
-    const fallback = t('presets.custom_line.label');
-    if (lineConfig?.mode === 'edit' && lineConfig.widgetId) {
-      const existing = addedWidgets.find((w) => w.id === lineConfig.widgetId);
-      const rebuilt = buildLineWidget(config, fallback, {
-        id: lineConfig.widgetId,
+  /** Saves a configurable chart — appends when adding, replaces when editing. */
+  const saveChartWidget = (config: ChartConfig) => {
+    const fallback = t(`chartKind.${config.kind}`);
+    if (chartConfig?.mode === 'edit' && chartConfig.widgetId) {
+      const existing = addedWidgets.find((w) => w.id === chartConfig.widgetId);
+      const rebuilt = buildChartWidget(config, fallback, {
+        id: chartConfig.widgetId,
         layout: existing?.layout,
       });
       persistWidgets(addedWidgets.map((w) => (w.id === rebuilt.id ? rebuilt : w)));
     } else {
-      const widget = buildLineWidget(config, fallback, { placeAtY: bottomOfGrid() });
+      const widget = buildChartWidget(config, fallback, { placeAtY: bottomOfGrid() });
       persistWidgets([...addedWidgets, widget]);
     }
-    setLineConfig(null);
+    setChartConfig(null);
   };
 
   const removeWidget = (id: string) => {
@@ -353,10 +354,10 @@ export default function AnalyticsPage() {
                   onConfigure={
                     isConfigurableWidget(widget.id)
                       ? () =>
-                          setLineConfig({
+                          setChartConfig({
                             mode: 'edit',
                             widgetId: widget.id,
-                            initial: readLineConfig(widget),
+                            initial: readChartConfig(widget),
                           })
                       : undefined
                   }
@@ -372,17 +373,17 @@ export default function AnalyticsPage() {
         open={addOpen}
         onClose={() => setAddOpen(false)}
         onAdd={addWidget}
-        onAddCustomLine={() => {
+        onAddChart={(kind: ChartKind) => {
           setAddOpen(false);
-          setLineConfig({ mode: 'add', initial: DEFAULT_LINE_CONFIG });
+          setChartConfig({ mode: 'add', initial: defaultChartConfig(kind) });
         }}
       />
-      <LineWidgetConfigDialog
-        open={!!lineConfig}
-        mode={lineConfig?.mode ?? 'add'}
-        initial={lineConfig?.initial ?? DEFAULT_LINE_CONFIG}
-        onClose={() => setLineConfig(null)}
-        onSave={saveLineWidget}
+      <ChartConfigDialog
+        open={!!chartConfig}
+        mode={chartConfig?.mode ?? 'add'}
+        initial={chartConfig?.initial ?? defaultChartConfig('line')}
+        onClose={() => setChartConfig(null)}
+        onSave={saveChartWidget}
       />
       <AnalyticsTutorial />
     </div>
