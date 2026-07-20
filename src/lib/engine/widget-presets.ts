@@ -217,3 +217,95 @@ export function buildAddedWidget(
 
 /** An added widget is one whose id carries the `added:` namespace. */
 export const isAddedWidget = (id: string): boolean => id.startsWith('added:');
+
+// ── Custom line chart (user binds its own data) ──────────────────────────────
+
+/** Ids of custom line widgets, so the frame can offer the "configure" control. */
+const CUSTOM_LINE_PREFIX = 'added:custom_line:';
+
+export const isConfigurableWidget = (id: string): boolean =>
+  id.startsWith(CUSTOM_LINE_PREFIX);
+
+export const TIME_WINDOWS = [
+  'last_4_weeks',
+  'last_8_weeks',
+  'last_12_weeks',
+  'last_26_weeks',
+] as const;
+export type TimeWindow = (typeof TIME_WINDOWS)[number];
+
+/** Time dimensions a line chart can be bucketed by (semantic model `grain`). */
+export const GRANULARITIES = ['semana', 'mes'] as const;
+export type Granularity = (typeof GRANULARITIES)[number];
+
+/** Max series on one chart — beyond this a line chart stops being readable. */
+export const MAX_LINE_METRICS = 4;
+
+/** What the user binds to a custom line chart. */
+export interface LineWidgetConfig {
+  /** Semantic metric refs plotted as series (1..MAX_LINE_METRICS). */
+  metrics: string[];
+  window: TimeWindow;
+  granularity: Granularity;
+  /** Second Y axis — useful when scales differ wildly (price vs. counts). */
+  dualAxis: boolean;
+  /** User-provided title; falls back to the joined metric labels. */
+  title: string;
+}
+
+export const DEFAULT_LINE_CONFIG: LineWidgetConfig = {
+  metrics: [],
+  window: 'last_12_weeks',
+  granularity: 'semana',
+  dualAxis: false,
+  title: '',
+};
+
+/**
+ * Builds (or rebuilds) a custom line WidgetSpec from a user config. Passing an
+ * existing `id`/`layout` edits in place — the widget keeps its position and the
+ * user only re-binds the data.
+ */
+export function buildLineWidget(
+  config: LineWidgetConfig,
+  fallbackTitle: string,
+  placement: { id?: string; layout?: WidgetSpec['layout']; placeAtY?: number },
+): WidgetSpec {
+  return {
+    id: placement.id ?? `${CUSTOM_LINE_PREFIX}${Date.now()}`,
+    type: 'line',
+    title: config.title.trim() || fallbackTitle,
+    dataQuery: {
+      dimensions: [{ ref: config.granularity }],
+      metrics: config.metrics.map((ref) => ({ ref })),
+      filters: [],
+      aggregation: {},
+      time: { mode: 'series', range: config.window },
+    },
+    visualization: { kind: 'line', dualAxis: config.dualAxis },
+    layout: placement.layout ?? { x: 0, y: placement.placeAtY ?? 0, w: 6, h: 3 },
+  };
+}
+
+/** Recovers the config from a built spec, so the edit dialog opens pre-filled. */
+export function readLineConfig(widget: WidgetSpec): LineWidgetConfig {
+  const q = (widget.dataQuery ?? {}) as {
+    dimensions?: Array<{ ref: string }>;
+    metrics?: Array<{ ref: string }>;
+    time?: { range?: string };
+  };
+  const viz = widget.visualization as { dualAxis?: boolean };
+  const granularity = q.dimensions?.[0]?.ref;
+  const range = q.time?.range;
+  return {
+    metrics: (q.metrics ?? []).map((m) => m.ref),
+    window: (TIME_WINDOWS as readonly string[]).includes(range ?? '')
+      ? (range as TimeWindow)
+      : 'last_12_weeks',
+    granularity: (GRANULARITIES as readonly string[]).includes(granularity ?? '')
+      ? (granularity as Granularity)
+      : 'semana',
+    dualAxis: viz?.dualAxis === true,
+    title: widget.title ?? '',
+  };
+}

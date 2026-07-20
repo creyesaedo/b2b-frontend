@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { X } from 'lucide-react';
+import { LineChart, X } from 'lucide-react';
 import { WIDGET_PRESETS, type WidgetPreset } from '@/lib/engine/widget-presets';
 
 /**
@@ -10,15 +10,20 @@ import { WIDGET_PRESETS, type WidgetPreset } from '@/lib/engine/widget-presets';
  * Presets come from `widget-presets.ts`; each is localized under
  * `analytics.presets.<id>` in the message bundles. Picking one calls `onAdd`
  * and closes the dialog.
+ *
+ * The custom line chart is the exception: it needs its data bound first, so it
+ * hands off to the config dialog via `onAddCustomLine`.
  */
 export function AddWidgetDialog({
   open,
   onClose,
   onAdd,
+  onAddCustomLine,
 }: {
   open: boolean;
   onClose: () => void;
   onAdd: (preset: WidgetPreset) => void;
+  onAddCustomLine: () => void;
 }) {
   const t = useTranslations('analytics');
 
@@ -60,6 +65,23 @@ export function AddWidgetDialog({
         <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
           {t('addWidgetSubtitle')}
         </p>
+
+        {/* Custom line chart — the only entry that asks for its data first. */}
+        <button
+          type="button"
+          onClick={onAddCustomLine}
+          className="mb-3 flex w-full items-start gap-3 rounded-xl border border-blue-200 bg-blue-50 p-3 text-left transition-colors hover:border-blue-500 dark:border-blue-900 dark:bg-blue-950/50 dark:hover:border-blue-500"
+        >
+          <LineChart className="mt-0.5 h-5 w-5 shrink-0 text-blue-600 dark:text-blue-300" />
+          <span className="min-w-0">
+            <span className="block text-sm font-medium text-gray-800 dark:text-gray-100">
+              {t('presets.custom_line.label')}
+            </span>
+            <span className="block text-xs text-gray-500 dark:text-gray-400">
+              {t('presets.custom_line.desc')}
+            </span>
+          </span>
+        </button>
 
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {WIDGET_PRESETS.map((preset) => (

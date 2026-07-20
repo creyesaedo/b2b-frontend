@@ -23,6 +23,8 @@ export function WidgetRenderer({
   fmt,
   onRemove,
   removeLabel,
+  onConfigure,
+  configureLabel,
 }: {
   widget: WidgetSpec;
   resolved?: ResolvedWidget;
@@ -32,6 +34,9 @@ export function WidgetRenderer({
   /** Present for user-added widgets: removes the widget from the dashboard. */
   onRemove?: () => void;
   removeLabel?: string;
+  /** Present for configurable widgets: re-binds the widget's data. */
+  onConfigure?: () => void;
+  configureLabel?: string;
 }) {
   return (
     <WidgetFrame
@@ -40,6 +45,8 @@ export function WidgetRenderer({
       quality={resolved?.resultSet?.quality}
       onRemove={onRemove}
       removeLabel={removeLabel}
+      onConfigure={onConfigure}
+      configureLabel={configureLabel}
     >
       <WidgetBody
         widget={widget}

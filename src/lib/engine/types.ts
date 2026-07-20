@@ -132,6 +132,36 @@ export interface TemplateSummary {
   parameters: TemplateParameter[];
 }
 
+// ── Semantic catalog (engine semantic/semantic.service.ts `catalog()`) ───────
+// The business-facing view of the semantic layer: what a user may bind to a
+// widget. No SQL is ever exposed here.
+
+export interface CatalogMetric {
+  name: string;
+  label: string;
+  format: MetricFormat;
+  additivity: 'additive' | 'semi_additive' | 'non_additive' | 'derived' | 'derived_temporal';
+  unit: 'local' | 'usd' | 'none';
+  definition: string;
+}
+
+export interface CatalogDimension {
+  name: string;
+  label: string;
+  type: string;
+  hierarchy: string[] | null;
+  grain: string | null;
+  definition: string;
+}
+
+export interface SemanticCatalog {
+  version: number | string;
+  dataset: { name: string; label: string; grain: string };
+  dimensions: CatalogDimension[];
+  metrics: CatalogMetric[];
+  capabilities: Record<string, { metrics: string[]; dimensions: string[] }>;
+}
+
 // ── Insights (engine insights/insight.types.ts) ──────────────────────────────
 
 export type DetectorName = 'cambio_significativo' | 'tendencia' | 'concentracion';

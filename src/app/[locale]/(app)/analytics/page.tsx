@@ -21,9 +21,15 @@ import {
   resolveWidget,
 } from '@/lib/engine/api';
 import type { ResolvedWidget, TemplateSummary, WidgetSpec } from '@/lib/engine/types';
+import { LineWidgetConfigDialog } from '@/components/analytics/line-widget-config';
 import {
   buildAddedWidget,
+  buildLineWidget,
+  DEFAULT_LINE_CONFIG,
   isAddedWidget,
+  isConfigurableWidget,
+  readLineConfig,
+  type LineWidgetConfig,
   type WidgetPreset,
 } from '@/lib/engine/widget-presets';
 import { siteCurrency, type CellFormatOptions } from '@/lib/engine/format';
@@ -70,6 +76,12 @@ export default function AnalyticsPage() {
   const widgetsKey = `analytics-widgets:${templateId}`;
   const [addedWidgets, setAddedWidgets] = useState<WidgetSpec[]>([]);
   const [addOpen, setAddOpen] = useState(false);
+  // Open data-binding dialog: `add` creates a new line chart, `edit` re-binds one.
+  const [lineConfig, setLineConfig] = useState<{
+    mode: 'add' | 'edit';
+    widgetId?: string;
+    initial: LineWidgetConfig;
+  } | null>(null);
   useEffect(() => {
     try {
       const stored = localStorage.getItem(widgetsKey);
@@ -141,7 +153,8 @@ export default function AnalyticsPage() {
   const globalFilters = spec?.globalFilters ?? [];
   const addedResults = useQueries({
     queries: addedWidgets.map((w) => ({
-      queryKey: ['engine-widget', templateId, params, w.id],
+      // dataQuery is part of the key: re-binding a widget's data must refetch.
+      queryKey: ['engine-widget', templateId, params, w.id, w.dataQuery],
       queryFn: () => resolveWidget(w, globalFilters),
       enabled: ready && !!spec,
       staleTime: 5 * 60_000,
@@ -162,14 +175,33 @@ export default function AnalyticsPage() {
   const allResolved = [...resolvedWidgets, ...addedResolved];
 
   const addWidget = (preset: WidgetPreset) => {
-    const bottomY = allWidgets.reduce((max, w) => {
-      const lay = layoutOverrides[w.id] ?? w.layout;
-      return Math.max(max, lay.y + lay.h);
-    }, 0);
-    const widget = buildAddedWidget(preset, t(`presets.${preset.id}.label`), bottomY);
+    const widget = buildAddedWidget(preset, t(`presets.${preset.id}.label`), bottomOfGrid());
     persistWidgets([...addedWidgets, widget]);
     setAddOpen(false);
   };
+  const bottomOfGrid = () =>
+    allWidgets.reduce((max, w) => {
+      const lay = layoutOverrides[w.id] ?? w.layout;
+      return Math.max(max, lay.y + lay.h);
+    }, 0);
+
+  /** Saves the custom line chart — appends when adding, replaces when editing. */
+  const saveLineWidget = (config: LineWidgetConfig) => {
+    const fallback = t('presets.custom_line.label');
+    if (lineConfig?.mode === 'edit' && lineConfig.widgetId) {
+      const existing = addedWidgets.find((w) => w.id === lineConfig.widgetId);
+      const rebuilt = buildLineWidget(config, fallback, {
+        id: lineConfig.widgetId,
+        layout: existing?.layout,
+      });
+      persistWidgets(addedWidgets.map((w) => (w.id === rebuilt.id ? rebuilt : w)));
+    } else {
+      const widget = buildLineWidget(config, fallback, { placeAtY: bottomOfGrid() });
+      persistWidgets([...addedWidgets, widget]);
+    }
+    setLineConfig(null);
+  };
+
   const removeWidget = (id: string) => {
     persistWidgets(addedWidgets.filter((w) => w.id !== id));
     if (layoutOverrides[id]) {
@@ -318,6 +350,17 @@ export default function AnalyticsPage() {
                     isAddedWidget(widget.id) ? () => removeWidget(widget.id) : undefined
                   }
                   removeLabel={t('removeWidget')}
+                  onConfigure={
+                    isConfigurableWidget(widget.id)
+                      ? () =>
+                          setLineConfig({
+                            mode: 'edit',
+                            widgetId: widget.id,
+                            initial: readLineConfig(widget),
+                          })
+                      : undefined
+                  }
+                  configureLabel={t('configureWidget')}
                 />
               )}
             />
@@ -325,7 +368,22 @@ export default function AnalyticsPage() {
         </DataState>
       )}
 
-      <AddWidgetDialog open={addOpen} onClose={() => setAddOpen(false)} onAdd={addWidget} />
+      <AddWidgetDialog
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        onAdd={addWidget}
+        onAddCustomLine={() => {
+          setAddOpen(false);
+          setLineConfig({ mode: 'add', initial: DEFAULT_LINE_CONFIG });
+        }}
+      />
+      <LineWidgetConfigDialog
+        open={!!lineConfig}
+        mode={lineConfig?.mode ?? 'add'}
+        initial={lineConfig?.initial ?? DEFAULT_LINE_CONFIG}
+        onClose={() => setLineConfig(null)}
+        onSave={saveLineWidget}
+      />
       <AnalyticsTutorial />
     </div>
   );

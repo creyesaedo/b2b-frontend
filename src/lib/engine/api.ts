@@ -8,6 +8,7 @@ import type {
   InstantiateResponse,
   ResolvedWidget,
   ResultSet,
+  SemanticCatalog,
   TemplateSummary,
   WidgetSpec,
 } from './types';
@@ -45,6 +46,10 @@ function normalizeWidgets(widgets: ResolvedWidget[] | undefined): ResolvedWidget
 
 export const listEngineTemplates = () =>
   apiFetch<TemplateSummary[]>(`/v1/${PROVIDER}/templates`);
+
+/** Business catalog of bindable dimensions/metrics (feeds the widget config UI). */
+export const getSemanticCatalog = () =>
+  apiFetch<SemanticCatalog>(`/v1/${PROVIDER}/semantic/catalog`);
 
 /** Params → concrete DashboardSpec with every widget resolved in one call. */
 export const instantiateTemplate = async (

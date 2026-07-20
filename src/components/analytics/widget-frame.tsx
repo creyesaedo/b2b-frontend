@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertCircle, GripVertical, Info, X } from 'lucide-react';
+import { AlertCircle, GripVertical, Info, Settings2, X } from 'lucide-react';
 import type { QualityNote } from '@/lib/engine/types';
 
 /**
@@ -19,6 +19,8 @@ export function WidgetFrame({
   quality = [],
   onRemove,
   removeLabel,
+  onConfigure,
+  configureLabel,
   children,
 }: {
   title: string;
@@ -27,6 +29,9 @@ export function WidgetFrame({
   /** Present for user-added widgets: shows an X that removes the widget. */
   onRemove?: () => void;
   removeLabel?: string;
+  /** Present for configurable widgets: opens the data-binding dialog. */
+  onConfigure?: () => void;
+  configureLabel?: string;
   children?: React.ReactNode;
 }) {
   return (
@@ -40,6 +45,19 @@ export function WidgetFrame({
             <span className="text-gray-400" title={quality.map((q) => q.message).join('\n')}>
               <Info className="h-3.5 w-3.5" />
             </span>
+          )}
+          {onConfigure && (
+            <button
+              type="button"
+              aria-label={configureLabel}
+              title={configureLabel}
+              onClick={onConfigure}
+              // Opt out of the drag handle so the click configures, not drags.
+              onPointerDown={(e) => e.stopPropagation()}
+              className="widget-no-drag rounded p-0.5 text-gray-300 opacity-0 transition group-hover:opacity-100 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-600 dark:hover:bg-gray-800"
+            >
+              <Settings2 className="h-3.5 w-3.5" />
+            </button>
           )}
           {onRemove && (
             <button
